@@ -9,7 +9,7 @@ copyright: "© 2026 Jorge Mena"
 # ─────────────────────────────────────────
 theme:
   name: material
-  custom_dir: overrides         # uncomment only if you create an overrides/ folder
+  # custom_dir: overrides         # uncomment only if you create an overrides/ folder
 
   font:
     text: DM Sans                 # clean, modern, not generic
