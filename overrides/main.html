@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block header %}
+
+
+<nav class="custom-nav">
+  <div class="custom-nav__inner">
+    <a href="/" class="custom-nav__logo">JM</a>
+    <div class="custom-nav__links">
+      <a href="/sql/">SQL</a>
+      <a href="/powerbi/">Power BI</a>
+      <a href="/databricks/">Databricks</a>
+      <a href="/projects/">Projects</a>
+      <a href="/notes/">Notes</a>
+      <a href="/about/">About</a>
+    </div>
+    <div class="custom-nav__search">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="text" placeholder="Search…" />
+    </div>
+  </div>
+</nav>
+
+
+{% endblock %}

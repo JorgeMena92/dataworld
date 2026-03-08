@@ -8,24 +8,22 @@
 
 /* ─── Brand Color Tokens ────────────────────────────────── */
 :root {
-  /* Core palette — dark ink + warm amber */
   --brand-ink:        #0f0f0f;
   --brand-ink-soft:   #2a2a2a;
-  --brand-surface:    #fafaf8;       /* warm off-white, not clinical */
+  --brand-surface:    #fafaf8;
   --brand-amber:      #f5a623;
   --brand-amber-dark: #d4880f;
   --brand-amber-glow: rgba(245, 166, 35, 0.12);
   --brand-border:     #e8e4dd;
   --brand-muted:      #888074;
+  --nav-width:        1100px;   /* single token controls both nav + content width */
 
-  /* Overrides for Material tokens (light mode) */
   --md-primary-fg-color:        var(--brand-ink);
   --md-primary-bg-color:        var(--brand-surface);
   --md-accent-fg-color:         var(--brand-amber);
   --md-accent-fg-color--light:  var(--brand-amber-glow);
   --md-typeset-a-color:         var(--brand-amber-dark);
 
-  /* Typography scale */
   --md-text-font:    "DM Sans", sans-serif;
   --md-code-font:    "JetBrains Mono", monospace;
 }
@@ -53,52 +51,119 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ─── Header / Nav Bar ──────────────────────────────────── */
-.md-header {
-  background-color: var(--brand-surface);
-  border-bottom: 1px solid var(--brand-border);
-  box-shadow: none;                         /* kill the generic shadow */
-  backdrop-filter: blur(12px);
-}
-
-[data-md-color-scheme="slate"] .md-header {
-  background-color: rgba(20, 18, 16, 0.92);
-}
-
-.md-header__title {
-  font-family: "DM Serif Display", serif;
-  font-size: 1.2rem;
-  letter-spacing: -0.01em;
-  color: var(--brand-ink);
-}
-
-/* Tabs (top-level nav) */
+/* ─── Hide MkDocs default header and tabs ───────────────── */
+.md-header,
 .md-tabs {
+  display: none;
+}
+
+/* ─── Custom nav ────────────────────────────────────────── */
+.custom-nav {
+  display: flex;
+  align-items: center;
+  height: 56px;
   background-color: var(--brand-surface);
   border-bottom: 1px solid var(--brand-border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 0 2.5rem;
 }
 
-[data-md-color-scheme="slate"] .md-tabs {
-  background-color: #1a1714;
+/* Inner wrapper — same max-width as content */
+.custom-nav__inner {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: var(--nav-width);
+  margin: 0 auto;
+  gap: 1rem;
 }
 
-.md-tabs__link {
-  font-size: 0.8rem;
+.custom-nav__logo {
+  font-family: "DM Serif Display", serif;
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--brand-ink) !important;
+  border: 1px solid var(--brand-border);
+  border-bottom: 1px solid var(--brand-border) !important;
+  border-radius: 6px;
+  padding: 0.3em 0.6em;
+  text-decoration: none !important;
+  flex-shrink: 0;
+}
+
+.custom-nav__links {
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+  flex: 1;
+}
+
+.custom-nav__links a {
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.82rem;
   font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: none;
   color: var(--brand-muted) !important;
-  opacity: 1 !important;
-  transition: color 0.2s ease;
+  text-decoration: none !important;
+  border-bottom: none !important;
+  padding: 0.4em 0.75rem;
+  border-radius: 6px;
+  transition: color 0.2s ease, background 0.2s ease;
+  white-space: nowrap;
 }
 
-.md-tabs__link:hover,
-.md-tabs__link--active {
-  color: var(--brand-amber-dark) !important;
+.custom-nav__links a:hover {
+  color: var(--brand-ink) !important;
+  background: var(--brand-amber-glow);
 }
 
-.md-tabs__link--active {
-  border-bottom: 2px solid var(--brand-amber);
+/* Search bar on the right */
+.custom-nav__search {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(0,0,0,0.04);
+  border: 1px solid var(--brand-border);
+  border-radius: 999px;
+  padding: 0.3em 0.9em;
+  flex-shrink: 0;
+}
+
+.custom-nav__search input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.8rem;
+  color: var(--brand-ink);
+  width: 140px;
+}
+
+.custom-nav__search input::placeholder {
+  color: var(--brand-muted);
+}
+
+.custom-nav__search svg {
+  width: 14px;
+  height: 14px;
+  stroke: var(--brand-muted);
+  flex-shrink: 0;
+}
+
+[data-md-color-scheme="slate"] .custom-nav__search {
+  background: rgba(255,255,255,0.05);
+}
+
+/* ─── Center main content to match nav width ────────────── */
+.md-main__inner {
+  max-width: var(--nav-width);
+  margin: 0 auto;
+  padding: 0 2.5rem;
+}
+
+.md-content {
+  max-width: 780px;
 }
 
 /* ─── Sidebar ───────────────────────────────────────────── */
@@ -144,18 +209,13 @@ body {
   border-left: 2px solid var(--brand-amber);
 }
 
-/* ─── Content Area ──────────────────────────────────────── */
-.md-content {
-  max-width: 780px;              /* readable line length */
-}
-
+/* ─── Typography ────────────────────────────────────────── */
 .md-typeset {
   font-size: 1rem;
   line-height: 1.75;
   color: var(--brand-ink);
 }
 
-/* H1 — use the display serif for impact */
 .md-typeset h1 {
   font-family: "DM Serif Display", serif;
   font-size: 2.6rem;
@@ -164,10 +224,9 @@ body {
   line-height: 1.15;
   color: var(--brand-ink);
   margin-bottom: 0.25em;
-  border-bottom: none;           /* remove Material's default underline */
+  border-bottom: none;
 }
 
-/* H2 — section anchors */
 .md-typeset h2 {
   font-family: "DM Sans", sans-serif;
   font-size: 1.4rem;
@@ -179,14 +238,12 @@ body {
   border-bottom: 1px solid var(--brand-border);
 }
 
-/* H3 */
 .md-typeset h3 {
   font-size: 1.1rem;
   font-weight: 600;
   color: var(--brand-ink-soft);
 }
 
-/* Lead paragraph — first <p> after h1 gets larger text */
 .md-typeset > p:first-of-type {
   font-size: 1.15rem;
   color: var(--brand-muted);
@@ -194,7 +251,6 @@ body {
   font-weight: 300;
 }
 
-/* Links */
 .md-typeset a {
   color: var(--brand-amber-dark);
   text-decoration: none;
@@ -233,7 +289,6 @@ body {
   line-height: 1.7;
 }
 
-/* Copy button */
 .md-clipboard {
   color: var(--brand-muted);
   transition: color 0.2s;
@@ -242,7 +297,7 @@ body {
   color: var(--brand-amber);
 }
 
-/* ─── Admonitions (tip, note, warning…) ─────────────────── */
+/* ─── Admonitions ───────────────────────────────────────── */
 .md-typeset .admonition,
 .md-typeset details {
   border-radius: 8px;
@@ -301,17 +356,6 @@ body {
   fill: var(--brand-amber);
 }
 
-/* ─── Search ────────────────────────────────────────────── */
-.md-search__form {
-  border-radius: 8px;
-  background: rgba(0,0,0,0.06);
-  border: 1px solid var(--brand-border);
-}
-
-[data-md-color-scheme="slate"] .md-search__form {
-  background: rgba(255,255,255,0.06);
-}
-
 /* ─── Tags ──────────────────────────────────────────────── */
 .md-tag {
   background: var(--brand-amber-glow);
@@ -325,9 +369,9 @@ body {
   padding: 0.15em 0.7em;
 }
 
-/* ─── Hero section (used on index.md) ──────────────────── */
+/* ─── Hero section ──────────────────────────────────────── */
 .hero {
-  padding: 4rem 0 3rem;
+  padding: 1.5rem 0 1.5rem;
   text-align: left;
 }
 
@@ -365,12 +409,12 @@ body {
   margin-bottom: 2rem;
 }
 
-/* Card grid for section overview pages */
+/* ─── Card Grid ─────────────────────────────────────────── */
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 1.25rem;
-  margin: 2rem 0 4rem;  /* ← bump bottom from 3rem to 4rem */
+  margin: 1rem 0 4rem;
 }
 
 .card {
@@ -379,11 +423,9 @@ body {
   border-radius: 10px;
   padding: 1.5rem;
   text-decoration: none !important;
-  /* ← remove the border-bottom: none !important line */
   transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
 }
 
-/* Cancel the MkDocs link underline without killing the border */
 .card,
 .card:hover,
 .card:focus {
@@ -420,9 +462,10 @@ body {
   line-height: 1.5;
 }
 
-/* ─── Subtle page-load fade-in ──────────────────────────── */
+/* ─── Page load fade-in ─────────────────────────────────── */
 .md-content__inner {
   animation: fadeUp 0.35s ease both;
+  padding-top: 1rem;
   padding-bottom: 4rem;
 }
 
