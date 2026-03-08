@@ -14,7 +14,7 @@ hide:
 
 <div class="card-grid">
   <a href="sql/" class="card">
-    <span class="card__icon">🗄️</span>
+    <span class="card__icon">🗃️</span>
     <div class="card__title">SQL</div>
     <div class="card__desc">Portable SQL concepts, joins, CTEs, window functions, and practical query patterns.</div>
   </a>
@@ -25,10 +25,16 @@ hide:
     <div class="card__desc">DAX logic, data modeling ideas, and reporting-oriented solutions.</div>
   </a>
 
-  <a href="projects/" class="card">
-    <span class="card__icon">🛠️</span>
-    <div class="card__title">Projects</div>
-    <div class="card__desc">Selected technical write-ups and practical problem solving.</div>
+  <a href="handbook/" class="card">
+    <span class="card__icon">🗂️</span>
+    <div class="card__title">Handbook</div>
+    <div class="card__desc">Industry context, data roles, references, and notes worth keeping close.</div>
+  </a>
+
+  <a href="about/" class="card">
+    <span class="card__icon">💼</span>
+    <div class="card__title">About</div>
+    <div class="card__desc">Background, experience, and contact information.</div>
   </a>
 </div>
 

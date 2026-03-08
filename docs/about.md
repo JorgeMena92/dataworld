@@ -14,11 +14,7 @@ I am a Data Analyst and BI Developer with more than 7 years of experience workin
 
 My work has been mainly on the Microsoft platform — Power BI, SQL Server, SSIS, SSRS, Azure, Fabric, and Report Builder — but I have also worked with tools like Tableau, QlikView, Looker Studio, Python, and R. I follow agile methodologies and CI/CD practices using Git and Azure DevOps.
 
-I hold two Microsoft certifications — **PL-300 Power BI Data Analyst Associate** and **DP-600 Fabric Analytics Engineer Associate** — as well as a **Tableau Desktop Specialist** and **Google Data Analytics Specialization**.
-
-This site is my personal knowledge base. One place to document what I learn and build — structured, easy to revisit, and useful for others working in data. The focus right now is SQL and Power BI, built from real project experience.
-
-I work proficiently in both Spanish and English.
+I hold two Microsoft certifications — **PL-300 Power BI Data Analyst Associate** and **DP-600 Fabric Analytics Engineer Associate**.
 
 ---
 
@@ -27,8 +23,6 @@ I work proficiently in both Spanish and English.
 I wanted one place to document what I learn and build in a way that is structured, easy to revisit, and useful for others working in data.
 
 Instead of keeping everything scattered across local files, notebooks, screenshots, and personal notes, this site helps me maintain a cleaner and more professional knowledge base.
-
-My goal is not to make things look overly complex, but to make them clear and useful.
 
 ---
 

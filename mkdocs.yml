@@ -63,7 +63,6 @@ theme:
 # ─────────────────────────────────────────
 nav:
   - Home: index.md
-  - About: about.md
   - SQL:
     - sql/index.md
     - Introduction: sql/introduction.md
@@ -91,7 +90,8 @@ nav:
   - Handbook:
     - handbook/index.md
     - References: handbook/references.md
-    - Data Roles: handbook/data-roles.md    
+    - Data Roles: handbook/data-roles.md
+  - About: about.md
 
   # ── Add sub-pages below as you create the .md files ──────────────────
   # - SQL:

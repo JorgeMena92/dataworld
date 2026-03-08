@@ -104,11 +104,7 @@ tags: [sql, analytics]
     │   ├── power-query.md
     │   ├── deployment.md
     │   └── licensing.md
-    ├── databricks/
-    │   └── index.md
-    ├── projects/
-    │   └── index.md
-    └── notes/
+    └── handbook/
         ├── index.md
         ├── references.md
         └── data-roles.md
