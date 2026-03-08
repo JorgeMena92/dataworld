@@ -1,41 +1,39 @@
 ---
+title: Jorge Mena
+description: Data Engineering notes on SQL, Power BI, Databricks and more
 hide:
+  - navigation
   - toc
 ---
 
 <div class="hero">
-  <div class="hero-accent"></div>
-  <h1>Jorge Mena</h1>
-  <p>
-    Data Engineer / BI Analyst focused on SQL, Power BI, Databricks, ETL workflows, and practical analytics documentation.
+  <span class="hero__eyebrow">Data Engineering Notes</span>
+  <h1 class="hero__title">Hi, I'm Jorge.<br><em>I write about data.</em></h1>
+  <p class="hero__subtitle">
+    Data Engineer / BI Analyst focused on SQL, Power BI, Databricks, ETL workflows,
+    and practical analytics documentation.
   </p>
 </div>
 
-<hr>
-
-<h2>Main areas</h2>
-<p class="section-lead">
-  A curated space for technical notes, implementation patterns, tutorials, and selected project references.
-</p>
-
-<div class="home-grid">
-  <div class="home-card">
-    <h3>SQL</h3>
-    <p>Portable SQL concepts, joins, CTEs, window functions, and practical query patterns.</p>
-  </div>
-
-  <div class="home-card">
-    <h3>Power BI</h3>
-    <p>DAX logic, data modeling ideas, and reporting-oriented solutions.</p>
-  </div>
-
-  <div class="home-card">
-    <h3>Databricks</h3>
-    <p>PySpark workflows, transformations, ETL patterns, and engineering notes.</p>
-  </div>
-
-  <div class="home-card">
-    <h3>Projects</h3>
-    <p>Selected technical write-ups, implementation examples, and practical problem solving.</p>
-  </div>
+<div class="card-grid">
+  <a href="sql/" class="card">
+    <span class="card__icon">🗄️</span>
+    <div class="card__title">SQL</div>
+    <div class="card__desc">Portable SQL concepts, joins, CTEs, window functions, and practical query patterns.</div>
+  </a>
+  <a href="powerbi/" class="card">
+    <span class="card__icon">📊</span>
+    <div class="card__title">Power BI</div>
+    <div class="card__desc">DAX logic, data modeling ideas, and reporting-oriented solutions.</div>
+  </a>
+  <a href="databricks/" class="card">
+    <span class="card__icon">⚡</span>
+    <div class="card__title">Databricks</div>
+    <div class="card__desc">PySpark workflows, transformations, ETL patterns, and engineering notes.</div>
+  </a>
+  <a href="projects/" class="card">
+    <span class="card__icon">🛠️</span>
+    <div class="card__title">Projects</div>
+    <div class="card__desc">Selected technical write-ups and practical problem solving.</div>
+  </a>
 </div>

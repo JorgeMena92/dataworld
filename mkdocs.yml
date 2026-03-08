@@ -1,29 +1,67 @@
-site_name: Jorge Mena - Data Engineering Notes
-site_description: SQL, Power BI, Databricks, and Data Engineering tutorials
+site_name: Jorge Mena
+site_description: Data Engineering — SQL, Power BI, Databricks & beyond
 site_author: Jorge Mena
+site_url: https://jorgemena.github.io  # ← replace with your GitHub Pages URL
+copyright: "© 2026 Jorge Mena"
 
+# ─────────────────────────────────────────
+#  THEME
+# ─────────────────────────────────────────
 theme:
   name: material
+  # custom_dir: overrides         # uncomment only if you create an overrides/ folder
+
+  font:
+    text: DM Sans                 # clean, modern, not generic
+    code: JetBrains Mono          # beautiful for SQL / code blocks
+
   palette:
+    # Light mode
     - scheme: default
-      primary: white
-      accent: amber
+      primary: custom
+      accent: custom
       toggle:
         icon: material/weather-night
         name: Switch to dark mode
+    # Dark mode
     - scheme: slate
-      primary: black
-      accent: amber
+      primary: custom
+      accent: custom
       toggle:
         icon: material/weather-sunny
         name: Switch to light mode
 
-  features:
-    - navigation.top
-    - content.code.copy
-    - search.highlight
-    - search.share
+  logo: assets/logo.svg         # uncomment once you add the file to docs/assets/
+  # favicon: assets/favicon.png  # same
 
+  features:
+    # Navigation
+    - navigation.instant          # SPA-like page transitions (no reload feel)
+    - navigation.instant.progress # progress bar on slow pages
+    - navigation.tracking         # URL updates as user scrolls
+    - navigation.tabs             # top-level sections as horizontal tabs
+    - navigation.tabs.sticky      # tabs stay visible while scrolling
+    - navigation.sections         # group sub-pages under section headers
+    - navigation.expand           # auto-expand active section
+    - navigation.top              # back-to-top button
+    - navigation.indexes          # section index pages (index.md per folder)
+    - navigation.path             # breadcrumb trail
+
+    # Search
+    - search.highlight            # highlight search terms in results
+    - search.suggest              # autocomplete suggestions
+    - search.share                # shareable search URL
+
+    # Content
+    - content.code.copy           # copy button on code blocks
+    - content.code.annotate       # inline code annotations
+    - content.tabs.link           # link content tabs across pages
+    - content.tooltips            # rich tooltips on hover
+    - toc.follow                  # TOC highlights active heading
+
+# ─────────────────────────────────────────
+#  NAVIGATION
+# ─────────────────────────────────────────
 nav:
   - Home: index.md
   - About: about.md
@@ -33,5 +71,95 @@ nav:
   - Projects: projects/index.md
   - Notes: notes/index.md
 
+  # ── Add sub-pages below as you create the .md files ──────────────────
+  # - SQL:
+  #   - sql/index.md
+  #   - Foundations:
+  #     - sql/foundations/case-expressions.md
+  #     - sql/foundations/null-handling.md
+  #     - sql/foundations/ctes.md
+  #   - Analytics:
+  #     - sql/analytics/window-functions.md
+  #     - sql/analytics/frame-specification.md
+  #   - Advanced:
+  #     - sql/advanced/lateral-joins.md
+  #     - sql/advanced/recursive-ctes.md
+  #     - sql/advanced/match-recognize.md
+  # - Power BI:
+  #   - powerbi/index.md
+  #   - powerbi/dax-basics.md
+  #   - powerbi/data-modeling.md
+  # - Databricks:
+  #   - databricks/index.md
+  #   - databricks/delta-lake.md
+  #   - databricks/spark-sql.md
+
+# ─────────────────────────────────────────
+#  PLUGINS
+# ─────────────────────────────────────────
+plugins:
+  - search:
+      lang: en
+  - tags                          # add tags: [sql, window] in any page's frontmatter
+  - minify:                       # smaller output for GitHub Pages
+      minify_html: true
+  # - social:                     # uncomment after installing cairo on your system
+  #     cards_layout_options:     # pip install mkdocs-material[imaging]
+  #       font_family: DM Sans    # https://squidfunk.github.io/mkdocs-material/plugins/social/
+
+# ─────────────────────────────────────────
+#  MARKDOWN EXTENSIONS
+# ─────────────────────────────────────────
+markdown_extensions:
+  # Admonitions — styled callout blocks (tip, warning, note, etc.)
+  - admonition
+  - pymdownx.details             # collapsible admonitions
+  - pymdownx.superfences:        # fenced code blocks + diagrams
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:          # syntax highlighting
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite        # `inline code` highlighting
+  - pymdownx.tabbed:             # content tabs (e.g. SQL vs Python)
+      alternate_style: true
+  - pymdownx.tasklist:           # - [x] checkboxes
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - attr_list                    # add CSS classes to elements
+  - md_in_html                   # markdown inside HTML blocks
+  - tables
+  - toc:
+      permalink: true            # anchor links on headings
+      title: On this page
+
+# ─────────────────────────────────────────
+#  EXTRA
+# ─────────────────────────────────────────
+extra:
+  # Social links (shown in footer)
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/jorgemena92        # ← your handle
+    - icon: fontawesome/brands/linkedin
+      link: https://linkedin.com/in/jorgemena92   # ← your handle
+
+
+  # Google Analytics (optional — remove if not using)
+  analytics:
+    provider: google
+    property: G-XXXXXXXXXX                      # ← your GA4 ID
+
+  # Remove "Made with Material for MkDocs" footer tagline
+  generator: false
+
 extra_css:
   - stylesheets/extra.css
+
+# extra_javascript:
+#   - javascripts/extra.js        # uncomment if you add custom JS later
