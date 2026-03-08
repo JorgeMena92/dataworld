@@ -7,25 +7,22 @@ theme:
   palette:
     - scheme: default
       primary: white
-      accent: indigo
+      accent: amber
       toggle:
         icon: material/weather-night
         name: Switch to dark mode
     - scheme: slate
       primary: black
-      accent: blue
+      accent: amber
       toggle:
         icon: material/weather-sunny
         name: Switch to light mode
 
   features:
-    - navigation.sections
-    - navigation.expand
     - navigation.top
     - content.code.copy
     - search.highlight
     - search.share
-    - content.action.edit
 
 nav:
   - Home: index.md

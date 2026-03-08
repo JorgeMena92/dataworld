@@ -1,30 +1,41 @@
-# Jorge Mena
-
-Data Engineer / BI Analyst
-
-A technical knowledge base focused on SQL, Power BI, Databricks, ETL workflows, and practical analytics documentation.
-
+---
+hide:
+  - toc
 ---
 
-## Main areas
+<div class="hero">
+  <div class="hero-accent"></div>
+  <h1>Jorge Mena</h1>
+  <p>
+    Data Engineer / BI Analyst focused on SQL, Power BI, Databricks, ETL workflows, and practical analytics documentation.
+  </p>
+</div>
 
-### SQL
-Portable SQL concepts, query patterns, joins, aggregations, CTEs, window functions, and practical examples.
+<hr>
 
-### Power BI
-DAX logic, reporting ideas, data modeling notes, and dashboard-oriented thinking.
+<h2>Main areas</h2>
+<p class="section-lead">
+  A curated space for technical notes, implementation patterns, tutorials, and selected project references.
+</p>
 
-### Databricks
-PySpark transformations, ETL patterns, nested data handling, and data engineering workflows.
+<div class="home-grid">
+  <div class="home-card">
+    <h3>SQL</h3>
+    <p>Portable SQL concepts, joins, CTEs, window functions, and practical query patterns.</p>
+  </div>
 
-### Projects
-Selected write-ups, implementation notes, and examples from real work.
+  <div class="home-card">
+    <h3>Power BI</h3>
+    <p>DAX logic, data modeling ideas, and reporting-oriented solutions.</p>
+  </div>
 
-### Notes
-Short technical references, reminders, and lessons learned.
+  <div class="home-card">
+    <h3>Databricks</h3>
+    <p>PySpark workflows, transformations, ETL patterns, and engineering notes.</p>
+  </div>
 
----
-
-## Purpose
-
-This site is meant to be simple, organized, and useful — a place to document technical work clearly and keep knowledge easy to revisit.
+  <div class="home-card">
+    <h3>Projects</h3>
+    <p>Selected technical write-ups, implementation examples, and practical problem solving.</p>
+  </div>
+</div>
