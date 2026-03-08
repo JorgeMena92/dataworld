@@ -2,42 +2,29 @@
 
 Data Engineer / BI Analyst
 
-Welcome to my technical documentation site.  
-Here I share practical notes, tutorials, examples, and project references related to data analysis, business intelligence, and data engineering.
+A technical knowledge base focused on SQL, Power BI, Databricks, ETL workflows, and practical analytics documentation.
 
 ---
 
-## What you will find here
+## Main areas
 
 ### SQL
-ANSI SQL concepts, joins, window functions, query patterns, and practical examples.
+Portable SQL concepts, query patterns, joins, aggregations, CTEs, window functions, and practical examples.
 
 ### Power BI
-DAX notes, modeling ideas, reporting logic, and dashboard design tips.
+DAX logic, reporting ideas, data modeling notes, and dashboard-oriented thinking.
 
 ### Databricks
-PySpark transformations, ETL workflows, and data engineering patterns.
+PySpark transformations, ETL patterns, nested data handling, and data engineering workflows.
 
 ### Projects
-Selected technical work, documentation, and implementation notes.
+Selected write-ups, implementation notes, and examples from real work.
 
 ### Notes
-Small technical write-ups, lessons learned, and quick references.
+Short technical references, reminders, and lessons learned.
 
 ---
 
-## Main focus
+## Purpose
 
-This site is centered around:
-
-- SQL and query design
-- Data modeling
-- Power BI and DAX
-- Databricks and PySpark
-- ETL and reporting workflows
-
----
-
-## Why this site
-
-I created this space to organize and share technical knowledge in a practical way, with examples based on real work and common analytics problems.
+This site is meant to be simple, organized, and useful — a place to document technical work clearly and keep knowledge easy to revisit.

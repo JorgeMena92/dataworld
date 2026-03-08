@@ -6,28 +6,35 @@ theme:
   name: material
   palette:
     - scheme: default
-      primary: blue
-      accent: blue
+      primary: white
+      accent: indigo
       toggle:
         icon: material/weather-night
         name: Switch to dark mode
     - scheme: slate
-      primary: blue
+      primary: black
       accent: blue
       toggle:
         icon: material/weather-sunny
         name: Switch to light mode
+
   features:
     - navigation.sections
     - navigation.expand
+    - navigation.top
     - content.code.copy
     - search.highlight
     - search.share
+    - content.action.edit
 
 nav:
   - Home: index.md
+  - About: about.md
   - SQL: sql/index.md
   - Power BI: powerbi/index.md
   - Databricks: databricks/index.md
   - Projects: projects/index.md
   - Notes: notes/index.md
+
+extra_css:
+  - stylesheets/extra.css
