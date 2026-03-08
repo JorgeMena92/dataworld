@@ -3,14 +3,14 @@
 {% block header %}
 <nav class="custom-nav">
   <div class="custom-nav__inner">
-    <a href="/" class="custom-nav__logo">JM</a>
+    <a href="{{ config.site_url }}" class="custom-nav__logo">JM</a>
     <div class="custom-nav__links">
-      <a href="/sql/">SQL</a>
-      <a href="/powerbi/">Power BI</a>
-      <a href="/databricks/">Databricks</a>
-      <a href="/projects/">Projects</a>
-      <a href="/notes/">Notes</a>
-      <a href="/about/">About</a>
+      <a href="{{ config.site_url }}sql/">SQL</a>
+      <a href="{{ config.site_url }}powerbi/">Power BI</a>
+      <a href="{{ config.site_url }}databricks/">Databricks</a>
+      <a href="{{ config.site_url }}projects/">Projects</a>
+      <a href="{{ config.site_url }}notes/">Notes</a>
+      <a href="{{ config.site_url }}about/">About</a>
     </div>
     <!-- Theme toggle -->
     <label class="custom-nav__toggle" title="Switch theme">
