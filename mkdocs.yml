@@ -1,4 +1,4 @@
-site_name: Jorge Mena
+site_name: Data World
 site_description: Data Engineering — SQL, Power BI, Databricks & beyond
 site_author: Jorge Mena
 site_url: https://jorgemena92.github.io/dataworld/  # ← replace with your GitHub Pages URL
@@ -9,7 +9,9 @@ copyright: "© 2026 Jorge Mena"
 # ─────────────────────────────────────────
 theme:
   name: material
-  # custom_dir: overrides         # uncomment only if you create an overrides/ folder
+  logo: assets/logo.png
+  icon:
+    logo: null
 
   font:
     text: DM Sans                 # clean, modern, not generic
@@ -30,9 +32,6 @@ theme:
       toggle:
         icon: material/weather-sunny
         name: Switch to light mode
-
-  logo: assets/logo.svg         # uncomment once you add the file to docs/assets/
-  # favicon: assets/favicon.png  # same
 
   features:
     # Navigation
@@ -65,7 +64,10 @@ theme:
 nav:
   - Home: index.md
   - About: about.md
-  - SQL: sql/index.md
+  - SQL:
+    - sql/index.md
+    - Fundamentals: sql/fundamentals.md
+    - 12 ANSI SQL Features: sql/ansi-features.md
   - Power BI: powerbi/index.md
   - Databricks: databricks/index.md
   - Projects: projects/index.md

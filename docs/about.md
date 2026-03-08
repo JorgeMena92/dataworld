@@ -1,8 +1,3 @@
----
-hide:
-  - toc
----
-
 # About
 
 Hi, I'm Jorge Mena.
