@@ -557,3 +557,17 @@ body {
 .md-typeset .headerlink {
   display: none;
 }
+
+
+body {
+  overflow-x: hidden;
+}
+
+.custom-nav {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.custom-nav__inner {
+  min-width: max-content;
+}
