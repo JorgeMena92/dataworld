@@ -1,5 +1,5 @@
 ---
-title: Jorge Mena
+# title: Jorge Mena
 description: Data Engineering notes on SQL, Power BI, Databricks and more
 hide:
   - navigation

@@ -86,7 +86,7 @@ body {
   font-size: 0.8rem;
   font-weight: 500;
   letter-spacing: 0.06em;
-  text-transform: uppercase;
+  text-transform: none;
   color: var(--brand-muted) !important;
   opacity: 1 !important;
   transition: color 0.2s ease;
@@ -370,7 +370,7 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 1.25rem;
-  margin: 2rem 0;
+  margin: 2rem 0 4rem;  /* ← bump bottom from 3rem to 4rem */
 }
 
 .card {
@@ -379,14 +379,22 @@ body {
   border-radius: 10px;
   padding: 1.5rem;
   text-decoration: none !important;
-  border-bottom: none !important;
+  /* ← remove the border-bottom: none !important line */
   transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+
+/* Cancel the MkDocs link underline without killing the border */
+.card,
+.card:hover,
+.card:focus {
+  border-bottom: 1px solid var(--brand-border) !important;
 }
 
 .card:hover {
   box-shadow: 0 6px 24px rgba(0,0,0,0.08);
   transform: translateY(-2px);
   border-color: var(--brand-amber);
+  border-bottom-color: var(--brand-amber) !important;
 }
 
 [data-md-color-scheme="slate"] .card {
@@ -415,6 +423,7 @@ body {
 /* ─── Subtle page-load fade-in ──────────────────────────── */
 .md-content__inner {
   animation: fadeUp 0.35s ease both;
+  padding-bottom: 4rem;
 }
 
 @keyframes fadeUp {
