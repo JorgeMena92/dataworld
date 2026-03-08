@@ -7,7 +7,6 @@ hide:
 ---
 
 <div class="hero">
-  <span class="hero__eyebrow">Data Engineering Notes</span>
   <h1 class="hero__title">Hi, I'm Jorge.<br><em>I write about data.</em></h1>
   <p class="hero__subtitle">
     Data Engineer / BI Analyst focused on SQL, Power BI, Databricks, ETL workflows,
