@@ -1,79 +1,42 @@
+---
+title: About
+# description: Data Engineering notes on SQL, Power BI, Databricks and more
+hide:
+  - navigation
+  - toc
+---
+
 # About
 
-Hi, I'm Jorge Mena.
+<p class="lead">Hi, I'm Jorge Mena.</p>
 
-I work in data analysis and business intelligence, with experience in SQL, Power BI, Databricks, PySpark, ETL workflows, and reporting solutions.
+I am a Data Analyst and BI Developer with more than 7 years of experience working across the full data stack — from business problem definition to report delivery to stakeholders.
 
-This website is my technical knowledge base — a place where I organize practical notes, tutorials, implementation ideas, and lessons learned from real projects.
+My work has been mainly on the Microsoft platform — Power BI, SQL Server, SSIS, SSRS, Azure, Fabric, and Report Builder — but I have also worked with tools like Tableau, QlikView, Looker Studio, Python, and R. I follow agile methodologies and CI/CD practices using Git and Azure DevOps.
 
----
+I hold two Microsoft certifications — **PL-300 Power BI Data Analyst Associate** and **DP-600 Fabric Analytics Engineer Associate** — as well as a **Tableau Desktop Specialist** and **Google Data Analytics Specialization**.
 
-## What I work on
+This site is my personal knowledge base. One place to document what I learn and build — structured, easy to revisit, and useful for others working in data. The focus right now is SQL and Power BI, built from real project experience.
 
-My work is mainly focused on:
-
-- SQL and query design
-- Power BI and DAX
-- Databricks and PySpark
-- ETL and data transformation
-- Reporting and analytics workflows
-- Data modeling and documentation
+I work proficiently in both Spanish and English.
 
 ---
 
-## What you will find here
-
-This site is designed to be simple and useful.
-
-You will find content such as:
-
-- technical notes
-- small tutorials
-- query patterns
-- BI and reporting examples
-- project documentation
-- practical problem-solving approaches
-
----
-
-## Why I created this site
+## Why I created this site?
 
 I wanted one place to document what I learn and build in a way that is structured, easy to revisit, and useful for others working in data.
 
 Instead of keeping everything scattered across local files, notebooks, screenshots, and personal notes, this site helps me maintain a cleaner and more professional knowledge base.
 
----
-
-## Approach
-
-I like solutions that are:
-
-- practical
-- easy to understand
-- maintainable
-- focused on real use cases
-
 My goal is not to make things look overly complex, but to make them clear and useful.
-
----
-
-## Current topics
-
-Right now, the main focus of this site is:
-
-- SQL
-- Power BI
-- Databricks
-- Data Engineering notes
-- Technical documentation
 
 ---
 
 ## Contact
 
-You can later add here:
+Feel free to reach out — I am happy to connect with others working in data.
 
-- LinkedIn
-- GitHub
-- email
-- portfolio links
+- 📬 [jorgemenasalas92@gmail.com](mailto:jorgemenasalas92@gmail.com)
+- 💼 [LinkedIn](https://linkedin.com/in/jorgemena92)
+- 🐙 [GitHub](https://github.com/jorgemena92)
+- 🌐 [Data World](https://jorgemena92.github.io/dataworld/)

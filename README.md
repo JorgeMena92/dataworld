@@ -1,7 +1,7 @@
-# Jorge Mena — Data Engineering Notes
+# Jorge Mena — Data World
 
-Personal site built with [MkDocs Material](https://squidfunk.github.io/mkdocs-material/).  
-Covers SQL, Power BI, Databricks, and data engineering in general.
+Personal knowledge base built with [MkDocs Material](https://squidfunk.github.io/mkdocs-material/).  
+Covers SQL and Power BI with theoretical foundations and practical patterns from real project experience.
 
 🌐 **Live site:** https://jorgemena92.github.io/dataworld/
 
@@ -41,7 +41,7 @@ Tag releases before deploying:
 
 ```bash
 git add .
-git commit -m "v1.0.0 - first public release"
+git commit -m "v1.0.0 - description"
 git tag v1.0.0
 git push origin main --tags
 python -m mkdocs gh-deploy
@@ -56,16 +56,15 @@ python -m mkdocs gh-deploy
 
 ```yaml
 ---
-title: Window Functions
-description: How to use OVER(), PARTITION BY, and frame specs in SQL
+title: Page Title
+description: Short description for SEO
 tags: [sql, analytics]
-hide:
-  - toc
-  - navigation
 ---
 ```
 
 3. Add the file to the `nav:` section of `mkdocs.yml`
+
+> **Note:** `hide: toc` and `hide: navigation` are not needed — both are handled globally via CSS.
 
 ---
 
@@ -74,23 +73,43 @@ hide:
 ```
 .
 ├── mkdocs.yml
-├── overrides/
-│   └── main.html           # custom nav + footer
 └── docs/
     ├── index.md
     ├── about.md
     ├── stylesheets/
     │   └── extra.css
     ├── assets/
-    │   └── logo.svg
+    │   ├── logo.png
+    │   └── images/
+    │       └── favicon.png
     ├── sql/
-    │   └── index.md
+    │   ├── index.md
+    │   ├── introduction.md
+    │   ├── tools.md
+    │   ├── ddl.md
+    │   ├── dml.md
+    │   ├── dcl.md
+    │   ├── ansi-sql.md
+    │   ├── fundamentals.md
+    │   ├── basic.md
+    │   ├── intermediate.md
+    │   ├── advanced.md
+    │   └── ansi-features.md
     ├── powerbi/
-    │   └── index.md
+    │   ├── index.md
+    │   ├── fundamentals.md
+    │   ├── data-modeling.md
+    │   ├── dax.md
+    │   ├── report-design.md
+    │   ├── power-query.md
+    │   ├── deployment.md
+    │   └── licensing.md
     ├── databricks/
     │   └── index.md
     ├── projects/
     │   └── index.md
     └── notes/
-        └── index.md
+        ├── index.md
+        ├── references.md
+        └── data-roles.md
 ```

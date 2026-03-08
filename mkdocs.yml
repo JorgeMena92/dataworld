@@ -66,12 +66,32 @@ nav:
   - About: about.md
   - SQL:
     - sql/index.md
+    - Introduction: sql/introduction.md
+    - SQL Clients & Tools: sql/tools.md
+    - DDL: sql/ddl.md
+    - DML: sql/dml.md
+    - DCL: sql/dcl.md
+    - ANSI SQL: sql/ansi-sql.md
     - Fundamentals: sql/fundamentals.md
+    - Basic: sql/basic.md
+    - Intermediate: sql/intermediate.md
+    - Advanced: sql/advanced.md
     - 12 ANSI SQL Features: sql/ansi-features.md
-  - Power BI: powerbi/index.md
-  - Databricks: databricks/index.md
-  - Projects: projects/index.md
-  - Notes: notes/index.md
+  - Power BI:
+    - powerbi/index.md
+    - Fundamentals: powerbi/fundamentals.md
+    - Data Modeling: powerbi/data-modeling.md
+    - DAX: powerbi/dax.md
+    - Report Design: powerbi/report-design.md
+    - Power Query: powerbi/power-query.md
+    - Deployment & Service: powerbi/deployment.md
+    - Licensing: powerbi/licensing.md
+  #- Databricks: databricks/index.md
+  #- Projects: projects/index.md
+  - Handbook:
+    - handbook/index.md
+    - References: handbook/references.md
+    - Data Roles: handbook/data-roles.md    
 
   # ── Add sub-pages below as you create the .md files ──────────────────
   # - SQL:
