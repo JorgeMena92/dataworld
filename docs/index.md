@@ -1,17 +1,43 @@
-# Welcome to MkDocs
+# Jorge Mena
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+Data Engineer / BI Analyst
 
-## Commands
+Welcome to my technical documentation site.  
+Here I share practical notes, tutorials, examples, and project references related to data analysis, business intelligence, and data engineering.
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+---
 
-## Project layout
+## What you will find here
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+### SQL
+ANSI SQL concepts, joins, window functions, query patterns, and practical examples.
+
+### Power BI
+DAX notes, modeling ideas, reporting logic, and dashboard design tips.
+
+### Databricks
+PySpark transformations, ETL workflows, and data engineering patterns.
+
+### Projects
+Selected technical work, documentation, and implementation notes.
+
+### Notes
+Small technical write-ups, lessons learned, and quick references.
+
+---
+
+## Main focus
+
+This site is centered around:
+
+- SQL and query design
+- Data modeling
+- Power BI and DAX
+- Databricks and PySpark
+- ETL and reporting workflows
+
+---
+
+## Why this site
+
+I created this space to organize and share technical knowledge in a practical way, with examples based on real work and common analytics problems.
