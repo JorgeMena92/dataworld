@@ -30,7 +30,7 @@ Instead of keeping everything scattered across local files, notebooks, screensho
 
 Feel free to reach out — I am happy to connect with others working in data.
 
-- 📬 [jorgemenasalas92@gmail.com](mailto:jorgemenasalas92@gmail.com)
-- 💼 [LinkedIn](https://linkedin.com/in/jorgemena92)
-- 🐙 [GitHub](https://github.com/jorgemena92)
-- 🌐 [Data World](https://jorgemena92.github.io/dataworld/)
+- 📬 [jorgemenasalas92@gmail.com](mailto:jorgemenasalas92@gmail.com){target=_blank}
+- 💼 [LinkedIn](https://linkedin.com/in/jorgemena92){target=_blank}
+- 🐙 [GitHub](https://github.com/jorgemena92){target=_blank}
+- 🌐 [Data World](https://jorgemena92.github.io/dataworld/){target=_blank}
