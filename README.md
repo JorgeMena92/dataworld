@@ -1,7 +1,7 @@
 # Jorge Mena — Data World
 
 Personal knowledge base built with [MkDocs Material](https://squidfunk.github.io/mkdocs-material/).  
-Covers SQL and Power BI with theoretical foundations and practical patterns from real project experience.
+Covers SQL, Power BI, Azure Databricks, and data engineering patterns — combining theoretical foundations with practical experience from real projects.
 
 🌐 **Live site:** https://jorgemena92.github.io/dataworld/
 
@@ -41,8 +41,8 @@ Tag releases before deploying:
 
 ```bash
 git add .
-git commit -m "v1.0.0 - description"
-git tag v1.0.0
+git commit -m "v1.3.0 - description"
+git tag v1.3.0
 git push origin main --tags
 python -m mkdocs gh-deploy
 ```
@@ -51,7 +51,7 @@ python -m mkdocs gh-deploy
 
 ## Adding Content
 
-1. Create a `.md` file inside the relevant folder (`docs/sql/`, `docs/powerbi/`, etc.)
+1. Create a `.md` file inside the relevant folder (`docs/sql/`, `docs/powerbi/`, `docs/handbook/`, etc.)
 2. Add frontmatter at the top:
 
 ```yaml
@@ -107,5 +107,17 @@ tags: [sql, analytics]
     └── handbook/
         ├── index.md
         ├── references.md
-        └── data-roles.md
+        ├── data-roles.md
+        └── layered-fw.md
 ```
+
+---
+
+## Changelog
+
+| Version | Description |
+|---------|-------------|
+| v1.3.0 | Handbook: Layered Data Platform Support Framework |
+| v1.2.0 | Handbook section: Data Roles, References |
+| v1.1.0 | Power BI section complete |
+| v1.0.0 | Initial release — SQL section |

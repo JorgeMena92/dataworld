@@ -91,6 +91,7 @@ nav:
     - handbook/index.md
     - References: handbook/references.md
     - Data Roles: handbook/data-roles.md
+    - Layered Data Platform Support Framework: handbook/layered-fw.md
   - About: about.md
 
   # ── Add sub-pages below as you create the .md files ──────────────────
