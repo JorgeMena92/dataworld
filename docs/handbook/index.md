@@ -21,4 +21,9 @@ A collection of quick notes, reminders, and snippets across different data topic
     <div class="card__desc">Understaing the main roles, where to start and grow.</div>
   </a>
 
+  <a href="layered-fw/" class="card">
+    <div class="card__title">Layered Data Platform Support Framework</div>
+    <div class="card__desc">A structured 7-layer methodology for diagnosing incidents.</div>
+  </a>
+
 </div>
