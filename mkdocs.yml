@@ -40,8 +40,8 @@ theme:
     - navigation.tracking         # URL updates as user scrolls
     - navigation.tabs             # top-level sections as horizontal tabs
     - navigation.tabs.sticky      # tabs stay visible while scrolling
-    - navigation.sections         # group sub-pages under section headers
-    - navigation.expand           # auto-expand active section
+    #- navigation.sections         # group sub-pages under section headers
+    #- navigation.expand           # auto-expand active section
     - navigation.top              # back-to-top button
     - navigation.indexes          # section index pages (index.md per folder)
     - navigation.path             # breadcrumb trail
@@ -66,16 +66,63 @@ nav:
   - SQL:
     - sql/index.md
     - Introduction: sql/introduction.md
-    - SQL Clients & Tools: sql/tools.md
-    - DDL: sql/ddl.md
-    - DML: sql/dml.md
-    - DCL: sql/dcl.md
-    - ANSI SQL: sql/ansi-sql.md
-    - Fundamentals: sql/fundamentals.md
-    - Basic: sql/basic.md
-    - Intermediate: sql/intermediate.md
-    - Advanced: sql/advanced.md
-    - 12 ANSI SQL Features: sql/ansi-features.md
+    - Clients & Tools: sql/tools.md
+    - Standard ANSI: sql/ansi-sql.md
+    - Command Categories: sql/sql-command-categories.md
+    - Query (DQL):
+      - Fundamentals: sql/fundamentals.md
+      - Filtering & Conditions: sql/filtering-conditions.md
+      - Sorting & Limiting: sql/sorting-limiting.md
+      - Data Types & Casting: sql/data-types-casting.md
+      - Aggregations: sql/aggregations.md
+      - JOINs: sql/joins.md
+      - Set Operations: sql/set-operations.md
+      - Subqueries: sql/subqueries.md
+      - CTEs: sql/ctes.md
+      - Temporary Tables: sql/temporary-tables.md
+      - Window Functions: sql/window-functions.md
+    - Manipulation (DML):
+      - Fundamentals: sql/dml-fundamentals.md
+      - INSERT: sql/insert.md
+      - UPDATE: sql/update.md
+      - DELETE: sql/delete.md
+      - MERGE / UPSERT: sql/merge.md
+      - Transactions: sql/transactions.md
+      - Bulk Operations: sql/bulk-operations.md
+      - Incremental Data Loading: sql/incremental-loading.md
+    - Definition (DDL):
+      - Fundamentals: sql/ddl-fundamentals.md
+      - CREATE: sql/create.md
+      - ALTER: sql/alter.md
+      - DROP: sql/drop.md
+      - TRUNCATE: sql/truncate.md
+      - Constraints: sql/constraints.md
+      - Indexes: sql/indexes-ddl.md
+      - Naming Conventions: sql/naming-conventions.md
+      - Schema Design: sql/schema-design.md
+    - Database Objects:
+      - Views: sql/views.md
+      - Materialized Views: sql/materialized-views.md
+      - Functions: sql/functions.md
+      - Stored Procedures: sql/stored-procedures.md
+      - Triggers: sql/triggers.md
+    - Data Integrity: sql/data-integrity.md
+    - Performance:
+      - Query Optimization: sql/query-optimization.md
+      - Indexes: sql/indexes.md
+      - Execution Plans: sql/execution-plans.md
+      - Partitioning: sql/partitioning.md
+    - SQL Patterns:
+          - Gaps and Islands: sql/patterns-gaps-islands.md
+          - Running Totals: sql/patterns-running-totals.md
+          - Deduplication: sql/patterns-deduplication.md
+          - Latest Record per Group: sql/patterns-latest-record.md
+          - Top-N per Group: sql/patterns-top-n-per-group.md
+          - Sessionization: sql/patterns-sessionization.md
+          - Pivot and Unpivot: sql/patterns-pivot.md
+          - Slowly Changing Dimensions: sql/patterns-scd.md
+          - Date Spine: sql/patterns-date-spine.md
+          - Idempotent Operations: sql/patterns-idempotent.md
   - Power BI:
     - powerbi/index.md
     - Fundamentals: powerbi/fundamentals.md

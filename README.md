@@ -1,7 +1,7 @@
 # Jorge Mena — Data World
 
 Personal knowledge base built with [MkDocs Material](https://squidfunk.github.io/mkdocs-material/).  
-Covers SQL, Power BI, Azure Databricks, and data engineering patterns — combining theoretical foundations with practical experience from real projects.
+Covers SQL, Power BI, and data engineering patterns — combining theoretical foundations with practical experience from real projects.
 
 🌐 **Live site:** https://jorgemena92.github.io/dataworld/
 
@@ -41,8 +41,8 @@ Tag releases before deploying:
 
 ```bash
 git add .
-git commit -m "v1.3.0 - description"
-git tag v1.3.0
+git commit -m "v2.0.0 - description"
+git tag v2.0.0
 git push origin main --tags
 python -m mkdocs gh-deploy
 ```
@@ -58,13 +58,69 @@ python -m mkdocs gh-deploy
 ---
 title: Page Title
 description: Short description for SEO
-tags: [sql, analytics]
+tags: [topic, subtopic]
 ---
 ```
 
 3. Add the file to the `nav:` section of `mkdocs.yml`
 
 > **Note:** `hide: toc` and `hide: navigation` are not needed — both are handled globally via CSS.
+
+---
+
+## Content Structure
+
+Every page follows the same structure to keep the site consistent and easy to navigate.
+
+### Page Template
+
+```yaml
+---
+title: Page Title
+description: One sentence for SEO and the nav tooltip
+tags: [topic, subtopic]
+---
+```
+
+```markdown
+# Page Title
+
+One or two sentences explaining what this topic is and why it matters.
+
+---
+
+## What It Is
+
+Clear definition. No assumed knowledge — explain the concept before showing code or configuration.
+
+---
+
+## How It Works
+
+Core syntax, mechanics, or configuration. Minimal and focused on the essential pattern.
+
+---
+
+## Common Patterns
+
+Real-world variations and use cases — the situations you actually encounter in practice.
+
+---
+
+## Best Practices
+
+Short, actionable rules. What to do, what to avoid, and why.
+```
+
+### Content Principles
+
+- **Definition first** — always explain what something is before showing how to use it
+- **Standard approach first, platform-specific second** — lead with the canonical or most widely applicable way, then note tool-specific variations
+- **Real examples** — use realistic names that reflect actual scenarios (`orders`, `customers`, `sales_report`) — not generic placeholders like `table1` or `col_a`
+- **One concept per section** — if a section is getting long, it probably needs its own page
+- **Cross-reference related pages** — link to related topics instead of repeating content
+- **Use callouts consistently** — `!!! tip` for good practices, `!!! warning` for common mistakes, `!!! note` for platform-specific differences
+- **Best practices always last** — short, scannable, actionable
 
 ---
 
@@ -86,15 +142,55 @@ tags: [sql, analytics]
     │   ├── index.md
     │   ├── introduction.md
     │   ├── tools.md
-    │   ├── ddl.md
-    │   ├── dml.md
-    │   ├── dcl.md
     │   ├── ansi-sql.md
+    │   ├── sql-command-categories.md
     │   ├── fundamentals.md
-    │   ├── basic.md
-    │   ├── intermediate.md
-    │   ├── advanced.md
-    │   └── ansi-features.md
+    │   ├── filtering-conditions.md
+    │   ├── sorting-limiting.md
+    │   ├── data-types-casting.md
+    │   ├── aggregations.md
+    │   ├── joins.md
+    │   ├── set-operations.md
+    │   ├── subqueries.md
+    │   ├── ctes.md
+    │   ├── temporary-tables.md
+    │   ├── window-functions.md
+    │   ├── dml-fundamentals.md
+    │   ├── insert.md
+    │   ├── update.md
+    │   ├── delete.md
+    │   ├── merge.md
+    │   ├── transactions.md
+    │   ├── bulk-operations.md
+    │   ├── incremental-loading.md
+    │   ├── ddl-fundamentals.md
+    │   ├── create.md
+    │   ├── alter.md
+    │   ├── drop.md
+    │   ├── truncate.md
+    │   ├── constraints.md
+    │   ├── indexes-ddl.md
+    │   ├── naming-conventions.md
+    │   ├── schema-design.md
+    │   ├── views.md
+    │   ├── materialized-views.md
+    │   ├── functions.md
+    │   ├── stored-procedures.md
+    │   ├── triggers.md
+    │   ├── query-optimization.md
+    │   ├── indexes.md
+    │   ├── execution-plans.md
+    │   ├── partitioning.md
+    │   ├── patterns-gaps-islands.md
+    │   ├── patterns-running-totals.md
+    │   ├── patterns-deduplication.md
+    │   ├── patterns-latest-record.md
+    │   ├── patterns-top-n-per-group.md
+    │   ├── patterns-sessionization.md
+    │   ├── patterns-pivot.md
+    │   ├── patterns-scd.md
+    │   ├── patterns-date-spine.md
+    │   └── patterns-idempotent.md
     ├── powerbi/
     │   ├── index.md
     │   ├── fundamentals.md
@@ -117,6 +213,7 @@ tags: [sql, analytics]
 
 | Version | Description |
 |---------|-------------|
+| v2.0.0 | SQL section fully rebuilt — ANSI-first, 50+ pages across DQL, DML, DDL, Database Objects, Performance, and SQL Patterns |
 | v1.3.0 | Handbook: Layered Data Platform Support Framework |
 | v1.2.0 | Handbook section: Data Roles, References |
 | v1.1.0 | Power BI section complete |
