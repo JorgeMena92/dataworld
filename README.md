@@ -213,6 +213,7 @@ Short, actionable rules. What to do, what to avoid, and why.
 
 | Version | Description |
 |---------|-------------|
+| v2.0.1 | Handbook: Layered Framework — interactive accordion diagram replacing Mermaid flowchart |
 | v2.0.0 | SQL section fully rebuilt — ANSI-first, 50+ pages across DQL, DML, DDL, Database Objects, Performance, and SQL Patterns |
 | v1.3.0 | Handbook: Layered Data Platform Support Framework |
 | v1.2.0 | Handbook section: Data Roles, References |
