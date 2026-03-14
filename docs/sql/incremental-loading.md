@@ -30,11 +30,12 @@ The most common approach — filter rows where a date column is newer than the l
 
 ```sql
 -- Load orders created since the last run
+-- '1900-01-01' is a sentinel date meaning "load everything from the beginning"
 INSERT INTO orders_warehouse
 SELECT *
 FROM orders_source
 WHERE created_at > (
-    SELECT COALESCE(MAX(created_at), '1900-01-01')
+    SELECT COALESCE(MAX(created_at), CAST('1900-01-01' AS TIMESTAMP))
     FROM orders_warehouse
 );
 ```
@@ -61,6 +62,7 @@ Use an auto-incrementing ID to detect new rows. Simpler and more reliable than t
 
 ```sql
 -- Load rows with an ID greater than the last loaded ID
+-- 0 is the sentinel value meaning "load everything from the beginning"
 INSERT INTO events_warehouse
 SELECT *
 FROM events_source
@@ -83,6 +85,9 @@ WHERE __$operation IN (1, 2, 4)  -- 1=delete, 2=insert, 4=update
 ORDER BY __$start_lsn;
 ```
 
+!!! warning
+    CDC implementation is entirely platform-specific — there is no ANSI SQL standard for it. The example above uses SQL Server CDC syntax (`__$operation`, `__$start_lsn`). PostgreSQL uses logical replication or extensions like `pglogical`. Cloud platforms like Snowflake and BigQuery have their own change tracking mechanisms (`CHANGES` clause, `INFORMATION_SCHEMA.CHANGE_HISTORY`). Always refer to your platform's documentation for CDC setup and consumption.
+
 ---
 
 ## Incremental Upsert Pattern
@@ -95,7 +100,7 @@ INSERT INTO staging_customers
 SELECT *
 FROM source_customers
 WHERE updated_at > (
-    SELECT COALESCE(MAX(updated_at), '1900-01-01')
+    SELECT COALESCE(MAX(updated_at), CAST('1900-01-01' AS TIMESTAMP))
     FROM customers_warehouse
 );
 
@@ -161,8 +166,8 @@ Late-arriving data — records that arrive after the pipeline has already proces
 -- Instead of loading from exactly the last watermark...
 WHERE created_at > (SELECT last_loaded_at FROM watermarks WHERE table_name = 'orders')
 
--- ...load from slightly before it (e.g. 1 hour overlap)
-WHERE created_at > (SELECT last_loaded_at - INTERVAL '1 hour' FROM watermarks WHERE table_name = 'orders')
+-- ...load from slightly before it (e.g. 1 hour overlap) — ANSI INTERVAL syntax
+WHERE created_at > (SELECT last_loaded_at - INTERVAL '1' HOUR FROM watermarks WHERE table_name = 'orders')
 ```
 
 The overlap means some rows will be processed twice — handle duplicates with `MERGE` or deduplication logic downstream.
@@ -176,14 +181,17 @@ When the target table is partitioned by date, replace entire partitions rather t
 ```sql
 -- Delete the partition for today
 DELETE FROM orders_warehouse
-WHERE DATE_TRUNC('day', created_at) = CURRENT_DATE;
+WHERE CAST(created_at AS DATE) = CURRENT_DATE;
 
 -- Reload the full partition
 INSERT INTO orders_warehouse
 SELECT *
 FROM orders_source
-WHERE DATE_TRUNC('day', created_at) = CURRENT_DATE;
+WHERE CAST(created_at AS DATE) = CURRENT_DATE;
 ```
+
+!!! note
+    `CAST(created_at AS DATE)` is the ANSI SQL portable way to truncate a timestamp to a date boundary. `DATE_TRUNC('day', ...)` is a common alternative but is not ANSI SQL — it is supported in PostgreSQL and Snowflake but not in SQL Server. See [Data Types & Casting](data-types-casting.md).
 
 This pattern is atomic (delete + insert in one transaction), simple to reason about, and works well with date-partitioned tables in modern data warehouses.
 
@@ -197,3 +205,4 @@ This pattern is atomic (delete + insert in one transaction), simple to reason ab
 - Validate row counts after each load — alert if the count is zero or anomalously low
 - Test your incremental logic against a full reload periodically to verify consistency
 - For high-volume tables, prefer partition replacement over row-level `MERGE` — it is simpler and faster
+- Use `CAST('1900-01-01' AS TIMESTAMP)` as the sentinel fallback date — document it clearly so its purpose is obvious

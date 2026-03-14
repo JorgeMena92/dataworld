@@ -279,7 +279,7 @@ SELECT dt
 FROM date_spine;
 ```
 
-A date spine is useful for filling gaps in time series data — join it to your fact table to ensure every date appears even if no events occurred. For the full treatment including joining to fact tables and handling gaps, see [Date Spine](../patterns-date-spine.md).
+A date spine is useful for filling gaps in time series data — join it to your fact table to ensure every date appears even if no events occurred. For the full treatment including joining to fact tables and handling gaps, see [Date Spine](patterns-date-spine.md).
 
 !!! warning
     Recursive CTEs can run indefinitely if the termination condition is never met. Always verify your anchor and recursive parts produce a finite sequence. Use `FETCH FIRST n ROWS` during development to test safely.

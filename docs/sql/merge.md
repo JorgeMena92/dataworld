@@ -77,6 +77,9 @@ WHEN NOT MATCHED BY SOURCE THEN
 !!! warning
     `WHEN NOT MATCHED BY SOURCE THEN DELETE` removes every target row not present in the source. Make sure the source is complete before running this — a partial load will delete valid data.
 
+!!! note
+    `NOT MATCHED BY SOURCE` is supported in SQL Server but not in PostgreSQL or MySQL. To achieve the same full-sync behavior in PostgreSQL, use a two-step approach: run `MERGE` (or `INSERT ... ON CONFLICT`) for upserts first, then a separate `DELETE FROM target WHERE NOT EXISTS (SELECT 1 FROM source WHERE source.key = target.key)`.
+
 ---
 
 ## Conditional MERGE
@@ -117,7 +120,7 @@ USING staging_customer AS source
     ON target.customer_key = source.customer_id
 
 WHEN MATCHED AND (
-    target.email  <> source.email OR
+    target.email   <> source.email OR
     target.segment <> source.segment
 ) THEN
     UPDATE SET
@@ -131,6 +134,9 @@ WHEN NOT MATCHED THEN
             source.segment, CURRENT_TIMESTAMP);
 ```
 
+!!! note
+    For SCD Type 2 (preserving history with effective date ranges) and other SCD patterns, see [Slowly Changing Dimensions](patterns-scd.md).
+
 ---
 
 ## MERGE Using a Subquery as Source
@@ -141,14 +147,19 @@ The source does not have to be a table — it can be any query.
 MERGE INTO monthly_summary AS target
 USING (
     SELECT
-        DATE_TRUNC('month', order_date) AS month,
-        SUM(amount)                     AS total_revenue,
-        COUNT(*)                        AS total_orders
+        EXTRACT(YEAR  FROM order_date) AS order_year,
+        EXTRACT(MONTH FROM order_date) AS order_month,
+        SUM(amount)                    AS total_revenue,
+        COUNT(*)                       AS total_orders
     FROM orders
-    WHERE order_date >= DATE_TRUNC('month', CURRENT_DATE)
-    GROUP BY 1
+    WHERE EXTRACT(YEAR  FROM order_date) = EXTRACT(YEAR  FROM CURRENT_DATE)
+      AND EXTRACT(MONTH FROM order_date) = EXTRACT(MONTH FROM CURRENT_DATE)
+    GROUP BY
+        EXTRACT(YEAR  FROM order_date),
+        EXTRACT(MONTH FROM order_date)
 ) AS source
-    ON target.month = source.month
+    ON target.order_year  = source.order_year
+   AND target.order_month = source.order_month
 
 WHEN MATCHED THEN
     UPDATE SET
@@ -156,9 +167,13 @@ WHEN MATCHED THEN
         target.total_orders  = source.total_orders
 
 WHEN NOT MATCHED THEN
-    INSERT (month, total_revenue, total_orders)
-    VALUES (source.month, source.total_revenue, source.total_orders);
+    INSERT (order_year, order_month, total_revenue, total_orders)
+    VALUES (source.order_year, source.order_month,
+            source.total_revenue, source.total_orders);
 ```
+
+!!! note
+    `DATE_TRUNC` is a common alternative for truncating dates to month boundaries but is not ANSI SQL. The `EXTRACT(YEAR ...)` / `EXTRACT(MONTH ...)` approach above is fully portable. See [Scalar Functions](scalar-functions.md).
 
 ---
 
@@ -194,4 +209,5 @@ ON DUPLICATE KEY UPDATE email = VALUES(email);
 - Use a subquery or CTE as the source when the data needs transformation before merging
 - Test with `SELECT` from the source before running `MERGE` in production
 - Be cautious with `WHEN NOT MATCHED BY SOURCE THEN DELETE` — verify the source is complete
+- For platforms without `NOT MATCHED BY SOURCE`, use a two-step upsert + delete approach
 - Wrap `MERGE` in a transaction for multi-table pipelines

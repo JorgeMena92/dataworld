@@ -56,7 +56,7 @@ WHERE is_valid = TRUE
 INSERT INTO dim_customer (customer_key, full_name, email, country, load_date)
 SELECT
     customer_id,
-    TRIM(first_name) || ' ' || TRIM(last_name),
+    CONCAT(TRIM(first_name), ' ', TRIM(last_name)),
     LOWER(email),
     UPPER(country_code),
     CURRENT_DATE
@@ -64,6 +64,9 @@ FROM staging_customers
 WHERE email IS NOT NULL
   AND country_code IS NOT NULL;
 ```
+
+!!! note
+    `CONCAT()` is used here instead of `||` for cross-platform portability — SQL Server does not support the `||` operator. See [Scalar Functions](scalar-functions.md).
 
 ---
 
@@ -82,13 +85,20 @@ WHERE EXTRACT(YEAR FROM created_at) = 2024;
 -- Build a summary table
 CREATE TABLE monthly_revenue AS
 SELECT
-    DATE_TRUNC('month', order_date) AS month,
+    EXTRACT(YEAR  FROM order_date) AS order_year,
+    EXTRACT(MONTH FROM order_date) AS order_month,
     country,
-    SUM(amount)  AS total_revenue,
-    COUNT(*)     AS total_orders
+    SUM(amount) AS total_revenue,
+    COUNT(*)    AS total_orders
 FROM orders
-GROUP BY 1, 2;
+GROUP BY
+    EXTRACT(YEAR  FROM order_date),
+    EXTRACT(MONTH FROM order_date),
+    country;
 ```
+
+!!! note
+    `DATE_TRUNC` is a common alternative for truncating dates to month boundaries but is not ANSI SQL. The `EXTRACT(YEAR ...)` / `EXTRACT(MONTH ...)` approach above is fully portable. See [Scalar Functions](scalar-functions.md).
 
 ---
 
@@ -135,41 +145,25 @@ FILE_FORMAT = (TYPE = 'CSV' SKIP_HEADER = 1);
 
 ## Batching Large Operations
 
-When updating or deleting millions of rows, doing it in one statement can lock the table and fill transaction logs. Split into batches instead.
+When updating or deleting millions of rows, doing it in one statement can lock the table and fill transaction logs. Split into batches instead using a standard primary key column.
 
 ```sql
--- Delete in batches of 10,000 rows
+-- Delete in batches of 10,000 rows using the primary key
 DELETE FROM logs
-WHERE created_at < '2023-01-01'
-  AND ctid IN (
-      SELECT ctid FROM logs
-      WHERE created_at < '2023-01-01'
-      LIMIT 10000
-  );
+WHERE log_id IN (
+    SELECT log_id
+    FROM logs
+    WHERE created_at < '2023-01-01'
+    FETCH FIRST 10000 ROWS ONLY
+);
 -- Repeat until 0 rows deleted
 ```
 
-```sql
--- PostgreSQL batch delete loop (using DO block)
-DO $$
-DECLARE
-    deleted INT;
-BEGIN
-    LOOP
-        DELETE FROM logs
-        WHERE id IN (
-            SELECT id FROM logs
-            WHERE created_at < '2023-01-01'
-            LIMIT 10000
-        );
+!!! note
+    The example above uses `FETCH FIRST` (ANSI SQL) and a standard primary key column (`log_id`) for portability. Avoid platform-specific row identifiers like `ctid` (PostgreSQL) or `ROWID` (Oracle) — they are internal and not portable.
 
-        GET DIAGNOSTICS deleted = ROW_COUNT;
-        EXIT WHEN deleted = 0;
-
-        PERFORM pg_sleep(0.1); -- brief pause between batches
-    END LOOP;
-END $$;
-```
+!!! note
+    Automating the batch loop (repeat until 0 rows deleted) requires procedural SQL extensions like PL/pgSQL (PostgreSQL) or T-SQL (SQL Server) — these are not ANSI SQL. In portable pipelines, handle the loop logic in the orchestration layer or calling application.
 
 ---
 
@@ -190,8 +184,10 @@ TRUNCATE TABLE staging_orders;
 INSERT INTO staging_orders
 SELECT * FROM raw_orders WHERE load_date = CURRENT_DATE;
 
--- Validate
--- Promote
+-- Validate row count before promoting
+SELECT COUNT(*) FROM staging_orders;
+
+-- Promote to production
 INSERT INTO orders SELECT * FROM staging_orders;
 
 COMMIT;
@@ -204,6 +200,7 @@ COMMIT;
 - Use `INSERT ... SELECT` over row-by-row inserts whenever loading from another table
 - Use `CTAS` to build snapshots and derived tables in one step
 - Use platform bulk load tools (`COPY`, `BULK INSERT`) for file-based loads
-- Batch large `DELETE` and `UPDATE` operations to avoid locking and log overflow
+- Batch large `DELETE` and `UPDATE` operations using primary key ranges — avoid platform-specific row identifiers
 - Always wrap bulk loads in transactions — partial loads are worse than no load
 - Validate row counts and checksums after bulk loads before committing
+- Use `CONCAT()` over `||` for string operations in cross-platform bulk transforms

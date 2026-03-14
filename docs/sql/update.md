@@ -57,6 +57,9 @@ SET notes = COALESCE(notes, '') || ' — verified'
 WHERE verified = TRUE;
 ```
 
+!!! note
+    The `||` operator is ANSI SQL for string concatenation but SQL Server uses `+` instead. For cross-platform queries use `CONCAT(COALESCE(notes, ''), ' — verified')`. See [Scalar Functions](scalar-functions.md).
+
 ---
 
 ## Update Using a Subquery
@@ -93,6 +96,9 @@ WHERE EXISTS (
 );
 ```
 
+!!! warning
+    If the subquery returns `NULL` for any row — for example when `discounted_price` is NULL in the pricing table — the `amount` column will be silently set to `NULL`. Always validate the source data before updating, or add a `WHERE discounted_price IS NOT NULL` condition inside the subquery.
+
 ```sql
 -- SQL Server (non-ANSI)
 UPDATE o
@@ -108,27 +114,7 @@ WHERE o.product_id = p.product_id;
 ```
 
 !!! tip
-    For cross-platform portability, use `MERGE` when you need to update rows based on a join. It is ANSI SQL and expresses the intent more clearly.
-
----
-
-## Safe UPDATE Pattern
-
-Always test with `SELECT` first using the exact same `WHERE` clause.
-
-```sql
--- Step 1: verify which rows will be affected
-SELECT customer_id, email
-FROM customers
-WHERE status = 'trial'
-  AND created_at < CURRENT_DATE - INTERVAL '30' DAY;
-
--- Step 2: update those rows
-UPDATE customers
-SET status = 'expired'
-WHERE status = 'trial'
-  AND created_at < CURRENT_DATE - INTERVAL '30' DAY;
-```
+    For cross-platform portability, use `MERGE` when you need to update rows based on a join. It is ANSI SQL and expresses the intent more clearly. See [MERGE / UPSERT](merge.md).
 
 ---
 
@@ -146,11 +132,32 @@ WHERE customer_id = 42;
 
 ---
 
+## Test Before You Execute
+
+Always validate the scope of an `UPDATE` by running the same `WHERE` clause as a `SELECT` first — confirm the row count and affected values before making any changes.
+
+```sql
+-- Step 1: verify which rows will be affected
+SELECT customer_id, email
+FROM customers
+WHERE status = 'trial'
+  AND created_at < CURRENT_DATE - INTERVAL '30' DAY;
+
+-- Step 2: update those rows
+UPDATE customers
+SET status = 'expired'
+WHERE status = 'trial'
+  AND created_at < CURRENT_DATE - INTERVAL '30' DAY;
+```
+
+---
+
 ## Best Practices
 
 - Always include a `WHERE` clause — an `UPDATE` without one modifies every row
 - Test with `SELECT` using the same `WHERE` clause before running the update
 - Use transactions when updating multiple related tables together
 - Use `COALESCE` when appending to nullable columns to avoid NULL concatenation issues
+- Use `CONCAT()` over `||` for string operations in cross-platform queries
 - Prefer `MERGE` over `UPDATE ... JOIN` for cross-platform compatibility
 - Add an `updated_at` timestamp column to tables that change frequently — update it on every write

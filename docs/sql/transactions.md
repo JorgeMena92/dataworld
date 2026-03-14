@@ -129,20 +129,23 @@ TRUNCATE TABLE staging_orders;
 INSERT INTO staging_orders
 SELECT * FROM raw_orders WHERE load_date = CURRENT_DATE;
 
--- Step 3: validate
--- If COUNT(*) = 0, something went wrong
-DO $$
-BEGIN
-    IF (SELECT COUNT(*) FROM staging_orders) = 0 THEN
-        RAISE EXCEPTION 'Staging load failed — no rows inserted';
-    END IF;
-END $$;
+-- Step 3: validate before promoting
+-- Run this SELECT and verify the count before proceeding
+-- If the result is 0, ROLLBACK instead of committing
+SELECT COUNT(*) FROM staging_orders;
 
 -- Step 4: promote to production
 INSERT INTO orders SELECT * FROM staging_orders;
 
 COMMIT;
+-- or ROLLBACK if validation in Step 3 failed
 ```
+
+!!! note
+    Inline validation logic (raising exceptions on empty results) requires procedural SQL extensions like PL/pgSQL (PostgreSQL) or T-SQL (SQL Server) — these are not ANSI SQL. In portable pipelines, run the validation `SELECT` as a separate step and handle the decision to commit or rollback in the calling application or orchestration layer.
+
+!!! warning
+    `TRUNCATE` inside a transaction is only reliably rollback-safe in PostgreSQL. In SQL Server and MySQL, `TRUNCATE` commits immediately and cannot be rolled back. See [DELETE vs TRUNCATE](delete.md#delete-vs-truncate) for platform details.
 
 ---
 

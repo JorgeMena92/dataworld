@@ -92,16 +92,20 @@ VALUES (42, 199.99, DEFAULT);
 
 ## Conditional Insert — INSERT if Not Exists
 
-Insert a row only if it does not already exist. The ANSI approach uses `MERGE` or a `NOT EXISTS` check.
+Insert a row only if it does not already exist. The ANSI portable approach uses `INSERT ... SELECT` with a `NOT EXISTS` check and an explicit `FROM (VALUES ...)` subquery as the source:
 
 ```sql
--- Insert only if no matching row exists
+-- ANSI SQL — insert only if no matching row exists
 INSERT INTO customers (customer_id, email)
-SELECT 42, 'jorge@example.com'
+SELECT src.customer_id, src.email
+FROM (VALUES (42, 'jorge@example.com')) AS src(customer_id, email)
 WHERE NOT EXISTS (
-    SELECT 1 FROM customers WHERE customer_id = 42
+    SELECT 1 FROM customers WHERE customer_id = src.customer_id
 );
 ```
+
+!!! note
+    Some databases support shorter forms of the same pattern. PostgreSQL allows `SELECT` without `FROM` for literal values. MySQL supports `INSERT IGNORE`. SQL Server has no direct equivalent — use `MERGE` for upsert logic. See [MERGE / UPSERT](merge.md) for the full treatment across platforms.
 
 ---
 
@@ -128,8 +132,8 @@ RETURNING order_id, created_at;
 | Single row insert | ✅ | ✅ | ✅ | ✅ |
 | Multi-row insert | ✅ | ✅ | ✅ | ✅ |
 | Insert from SELECT | ✅ | ✅ | ✅ | ✅ |
+| Conditional insert | `INSERT ... SELECT WHERE NOT EXISTS` | `MERGE` | `ON CONFLICT DO NOTHING` | `INSERT IGNORE` |
 | Return inserted values | — | `OUTPUT INSERTED.*` | `RETURNING` | `LAST_INSERT_ID()` |
-| Insert or ignore | — | — | `ON CONFLICT DO NOTHING` | `INSERT IGNORE` |
 
 ---
 
@@ -138,5 +142,5 @@ RETURNING order_id, created_at;
 - Always specify the column list in `INSERT` — never rely on column position
 - Use multi-row inserts or `INSERT ... SELECT` over looping single inserts for performance
 - Apply transformations (TRIM, LOWER, UPPER) inside `INSERT ... SELECT` rather than in a separate step
-- Use `NOT EXISTS` or `MERGE` for conditional inserts instead of checking in application code
+- Use `NOT EXISTS` with `INSERT ... SELECT` for conditional inserts — or `MERGE` for upsert logic across platforms. See [MERGE / UPSERT](merge.md)
 - Wrap large inserts in transactions so they can be rolled back if something fails midway

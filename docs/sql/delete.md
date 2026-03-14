@@ -76,6 +76,9 @@ DELETE FROM temp_log WHERE created_at < '2024-01-01';
 TRUNCATE TABLE temp_log;
 ```
 
+!!! note
+    `TRUNCATE` rollback support varies by platform. PostgreSQL supports `TRUNCATE` inside a transaction and it can be rolled back. SQL Server and MySQL commit `TRUNCATE` immediately — it cannot be rolled back once executed. See [TRUNCATE](truncate.md) for the full treatment.
+
 !!! tip
     Use `TRUNCATE` when you want to clear an entire table quickly. Use `DELETE` when you need to filter which rows to remove or need rollback support.
 
@@ -106,7 +109,30 @@ Soft deletes are the preferred pattern in production systems where:
 
 ---
 
-## Safe DELETE Pattern
+## Cascading Deletes
+
+When a parent row is deleted, related child rows can be deleted automatically via foreign key constraints.
+
+```sql
+-- Define cascade at table creation
+CREATE TABLE order_items (
+    item_id    INT PRIMARY KEY,
+    order_id   INT,
+    FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE
+);
+
+-- Deleting the order automatically deletes its items
+DELETE FROM orders WHERE order_id = 101;
+```
+
+!!! warning
+    Cascading deletes can remove far more data than intended if the dependency chain is deep. Always understand the full cascade path before using `ON DELETE CASCADE` in production.
+
+---
+
+## Test Before You Execute
+
+Always validate the scope of a `DELETE` by running the same `WHERE` clause as a `SELECT` first. Wrapping the operation in a transaction gives you a final safety net before committing.
 
 ```sql
 BEGIN;
@@ -126,27 +152,6 @@ WHERE status = 'cancelled'
 COMMIT;
 -- or ROLLBACK;
 ```
-
----
-
-## Cascading Deletes
-
-When a parent row is deleted, related child rows can be deleted automatically via foreign key constraints.
-
-```sql
--- Define cascade at table creation
-CREATE TABLE order_items (
-    item_id    INT PRIMARY KEY,
-    order_id   INT,
-    FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE
-);
-
--- Deleting the order automatically deletes its items
-DELETE FROM orders WHERE order_id = 101;
-```
-
-!!! warning
-    Cascading deletes can remove far more data than intended if the dependency chain is deep. Always understand the full cascade path before using `ON DELETE CASCADE` in production.
 
 ---
 

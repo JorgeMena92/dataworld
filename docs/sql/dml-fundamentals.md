@@ -19,6 +19,9 @@ Data Manipulation Language (DML) covers the commands that write and modify data 
 | `DELETE` | Remove rows |
 | `MERGE` | Insert or update based on a match condition |
 
+!!! note
+    `TRUNCATE` removes all rows from a table quickly and is classified as DDL in ANSI SQL — it changes the state of the table rather than manipulating individual rows. In practice it is often used as part of a DML pipeline (full load pattern). See [TRUNCATE](truncate.md) and [Schema Design](schema-design.md) for details.
+
 ---
 
 ## How DML Fits in the SQL Lifecycle
@@ -51,7 +54,7 @@ ROLLBACK; -- both changes undone
 ```
 
 !!! tip
-    Wrapping related DML operations in a transaction ensures atomicity — either all changes succeed or none of them do. This is critical for data integrity in multi-step pipelines.
+    Wrapping related DML operations in a transaction ensures atomicity — either all changes succeed or none of them do. This is critical for data integrity in multi-step pipelines. See [Transactions](transactions.md) for the full treatment.
 
 ---
 
@@ -70,12 +73,9 @@ Each pattern has tradeoffs between simplicity, performance, and recoverability.
 
 ---
 
-## Safety Rules for DML
+## Test Before You Execute
 
-- Always test `UPDATE` and `DELETE` with a `SELECT` using the same `WHERE` clause first
-- Always include a `WHERE` clause — without it, every row in the table is affected
-- Use transactions for multi-step operations
-- Prefer soft deletes over hard deletes when auditability matters
+Always validate the scope of a `UPDATE` or `DELETE` by running the same `WHERE` clause as a `SELECT` first — confirm the row count before making any changes.
 
 ```sql
 -- Test before you delete
@@ -89,3 +89,12 @@ DELETE FROM orders
 WHERE status = 'cancelled'
   AND created_at < '2023-01-01';
 ```
+
+---
+
+## Best Practices
+
+- Always test `UPDATE` and `DELETE` with a `SELECT` using the same `WHERE` clause first
+- Always include a `WHERE` clause — without it, every row in the table is affected
+- Use transactions for multi-step operations
+- Prefer soft deletes over hard deletes when auditability matters
