@@ -32,7 +32,7 @@ HAVING SUM(amount) > 5000;
 ```
 
 !!! tip
-    The `TEMPORARY` keyword can be shortened to `TEMP` in most databases — both are ANSI SQL compliant.
+    The `TEMPORARY` keyword can be shortened to `TEMP` in most databases — `TEMPORARY` is the strict ANSI keyword but `TEMP` is widely accepted as a shorthand.
 
 ---
 
@@ -46,7 +46,7 @@ CREATE TEMP TABLE temp_completed_orders AS
 SELECT *
 FROM orders
 WHERE status = 'completed'
-  AND order_date >= CURRENT_DATE - INTERVAL '90 days';
+  AND order_date >= CURRENT_DATE - INTERVAL '90' DAY;
 
 -- Reuse multiple times in the same session
 SELECT COUNT(*) FROM temp_completed_orders;
@@ -65,15 +65,15 @@ GROUP BY country;
 
 ```sql
 CREATE TEMP TABLE temp_summary (
-    region       VARCHAR(100),
-    total_orders INT,
+    region        VARCHAR(100),
+    total_orders  INT,
     total_revenue DECIMAL(12,2)
 );
 
 INSERT INTO temp_summary
 SELECT
     c.region,
-    COUNT(*)    AS total_orders,
+    COUNT(*)      AS total_orders,
     SUM(o.amount) AS total_revenue
 FROM orders o
 JOIN customers c ON o.customer_id = c.customer_id
@@ -128,7 +128,7 @@ WHERE customer_id IN (
 CREATE TEMP TABLE temp_peru_customers AS
 SELECT customer_id FROM customers WHERE country = 'Peru';
 
-SELECT * FROM orders WHERE customer_id IN (SELECT customer_id FROM temp_peru_customers);
+SELECT * FROM orders   WHERE customer_id IN (SELECT customer_id FROM temp_peru_customers);
 SELECT * FROM invoices WHERE customer_id IN (SELECT customer_id FROM temp_peru_customers);
 ```
 
@@ -158,7 +158,7 @@ JOIN customers c ON t.customer_id = c.customer_id;
 
 ## Vendor Differences
 
-Temporary table syntax is mostly consistent across databases but with some variations.
+Temporary table syntax varies more than most SQL features across platforms.
 
 | Database | Syntax | Scope |
 |---|---|---|
@@ -170,10 +170,21 @@ Temporary table syntax is mostly consistent across databases but with some varia
 | BigQuery | `CREATE TEMP TABLE` | Script / session |
 
 ```sql
--- SQL Server uses # prefix instead of TEMP keyword
-CREATE TABLE #temp_orders AS ...
+-- ANSI SQL / PostgreSQL / MySQL / Snowflake
+CREATE TEMP TABLE temp_orders AS
+SELECT * FROM orders WHERE status = 'completed';
+
+-- SQL Server — uses SELECT INTO with # prefix, no AS SELECT syntax
+SELECT *
+INTO #temp_orders
+FROM orders
+WHERE status = 'completed';
+
 SELECT * FROM #temp_orders;
 ```
+
+!!! warning
+    SQL Server does not support `CREATE TABLE ... AS SELECT`. Use `SELECT ... INTO #table_name` instead. The `#` prefix is required — it replaces the `TEMP`/`TEMPORARY` keyword.
 
 ---
 
@@ -198,6 +209,12 @@ SELECT * FROM #temp_orders;
 - Prefer CTEs for single-query logic — use temp tables when results are reused across multiple queries
 - Name temp tables with a `temp_` prefix to make their nature obvious in scripts
 
+---
+
+## Putting It All Together
+
+A complete script pattern combining all best practices — drop before create, ANSI-portable date filter, multiple reuses, and explicit cleanup at the end.
+
 ```sql
 -- Safe script pattern
 DROP TABLE IF EXISTS temp_orders;
@@ -206,7 +223,7 @@ CREATE TEMP TABLE temp_orders AS
 SELECT *
 FROM orders
 WHERE status = 'completed'
-  AND order_date >= DATE_TRUNC('year', CURRENT_DATE);
+  AND EXTRACT(YEAR FROM order_date) = EXTRACT(YEAR FROM CURRENT_DATE);
 
 -- Use it multiple times
 SELECT COUNT(*) FROM temp_orders;

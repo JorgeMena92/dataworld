@@ -42,14 +42,17 @@ SQL can do much more than just query data. It covers the full lifecycle of worki
 
 ## Types of SQL Commands
 
-SQL is divided into four main sublanguages based on what they do:
+SQL is divided into five categories based on what they do:
 
-| Type | Full Name | Purpose | Examples |
+| Category | Full Name | Purpose | Key Commands |
 |---|---|---|---|
-| DDL | Data Definition Language | Define structure | `CREATE`, `ALTER`, `DROP` |
-| DML | Data Manipulation Language | Work with data | `SELECT`, `INSERT`, `UPDATE`, `DELETE` |
-| DCL | Data Control Language | Manage access | `GRANT`, `REVOKE` |
+| DQL | Data Query Language | Read and retrieve data | `SELECT` |
+| DML | Data Manipulation Language | Write and modify data | `INSERT`, `UPDATE`, `DELETE`, `MERGE` |
+| DDL | Data Definition Language | Define database structure | `CREATE`, `ALTER`, `DROP`, `TRUNCATE` |
+| DCL | Data Control Language | Manage access and permissions | `GRANT`, `REVOKE` |
 | TCL | Transaction Control Language | Manage transactions | `COMMIT`, `ROLLBACK`, `SAVEPOINT` |
+
+See [SQL Command Categories](sql-command-categories.md) for a full breakdown with examples of each.
 
 ---
 

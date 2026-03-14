@@ -35,7 +35,6 @@ These are the standard types defined by ANSI SQL, supported across most major da
 |---|---|
 | `CHAR(n)` | Fixed-length string, padded with spaces |
 | `VARCHAR(n)` | Variable-length string up to n characters |
-| `TEXT` | Unlimited length text (not in all ANSI versions) |
 
 ```sql
 -- CHAR pads to fixed length — 'Peru' stored as 'Peru      ' in CHAR(10)
@@ -46,6 +45,9 @@ CREATE TABLE example (
 );
 ```
 
+!!! tip
+    `TEXT` is widely used across platforms but is not part of core ANSI SQL. Use `VARCHAR(n)` with a large value (e.g. `VARCHAR(4000)`) for portable queries. Reserve `TEXT` for platform-specific work where unlimited length is required.
+
 ### Date and Time
 
 | Type | Description | Example |
@@ -54,6 +56,15 @@ CREATE TABLE example (
 | `TIME` | Time only | `14:30:00` |
 | `TIMESTAMP` | Date and time | `2024-01-15 14:30:00` |
 | `INTERVAL` | Duration between two time points | `INTERVAL '7' DAY` |
+
+```sql
+-- INTERVAL used in date arithmetic
+SELECT CURRENT_DATE + INTERVAL '30' DAY;   -- 30 days from today
+SELECT CURRENT_DATE - INTERVAL '1' MONTH;  -- one month ago
+```
+
+!!! note
+    Date arithmetic with `INTERVAL` and date functions like `EXTRACT` are covered in [Scalar Functions](scalar-functions.md).
 
 ### Boolean
 
@@ -67,7 +78,7 @@ INSERT INTO flags VALUES (TRUE);
 ```
 
 !!! warning
-    SQL Server does not have a native `BOOLEAN` type — it uses `BIT` (0 or 1). When writing cross-platform SQL, avoid assuming `BOOLEAN` exists.
+    `BOOLEAN` support varies across platforms. SQL Server uses `BIT` (0 or 1) and MySQL uses `TINYINT(1)`. When writing cross-platform SQL, avoid assuming `BOOLEAN` exists — consider using `CHAR(1)` with values `'Y'`/`'N'` or a small integer instead.
 
 ---
 
@@ -103,11 +114,11 @@ SELECT
 FROM summary;
 
 -- Concatenate a number with a string
-SELECT 'Order #' || CAST(order_id AS VARCHAR) AS label
+SELECT 'Order #' || CAST(order_id AS VARCHAR(20)) AS label
 FROM orders;
 
--- Extract year from a string date
-SELECT CAST(CAST('2024-06-15' AS DATE) AS INTEGER);
+-- Extract year from a string date using ANSI EXTRACT
+SELECT EXTRACT(YEAR FROM CAST('2024-06-15' AS DATE));
 ```
 
 ---
@@ -123,7 +134,7 @@ WHERE order_id = '42'  -- string compared to integer
 -- This is always safe (explicit cast)
 WHERE order_id = CAST('42' AS INTEGER)
 -- or
-WHERE CAST(order_id AS VARCHAR) = '42'
+WHERE CAST(order_id AS VARCHAR(20)) = '42'
 ```
 
 !!! tip
@@ -136,15 +147,13 @@ WHERE CAST(order_id AS VARCHAR) = '42'
 Date handling is one of the biggest sources of cross-platform incompatibility.
 
 ```sql
--- ANSI SQL standard — works in PostgreSQL, Snowflake, BigQuery
+-- ANSI SQL standard — works in PostgreSQL, Snowflake, BigQuery, SQL Server
 SELECT CAST('2024-01-15' AS DATE);
 SELECT CAST('2024-01-15 14:30:00' AS TIMESTAMP);
-
--- Extract parts using ANSI EXTRACT
-SELECT EXTRACT(YEAR  FROM CURRENT_DATE);
-SELECT EXTRACT(MONTH FROM CURRENT_TIMESTAMP);
-SELECT EXTRACT(DAY   FROM order_date) FROM orders;
 ```
+
+!!! note
+    For extracting date parts and date arithmetic, use `EXTRACT()` and `INTERVAL` — both ANSI SQL and covered in [Scalar Functions](scalar-functions.md).
 
 ---
 
@@ -153,7 +162,7 @@ SELECT EXTRACT(DAY   FROM order_date) FROM orders;
 | Concept | ANSI SQL | SQL Server | PostgreSQL | MySQL |
 |---|---|---|---|---|
 | Exact decimal | `DECIMAL` | `DECIMAL` / `MONEY` | `DECIMAL` / `NUMERIC` | `DECIMAL` |
-| Large text | `VARCHAR` | `VARCHAR(MAX)` | `TEXT` | `TEXT` |
+| Large text | `VARCHAR(n)` | `VARCHAR(MAX)` | `TEXT` | `TEXT` |
 | Boolean | `BOOLEAN` | `BIT` | `BOOLEAN` | `TINYINT(1)` |
 | Auto increment | `GENERATED ALWAYS AS IDENTITY` | `IDENTITY(1,1)` | `SERIAL` / `IDENTITY` | `AUTO_INCREMENT` |
 | Type conversion | `CAST()` | `CAST()` / `CONVERT()` | `CAST()` / `::` | `CAST()` / `CONVERT()` |
@@ -166,6 +175,7 @@ SELECT EXTRACT(DAY   FROM order_date) FROM orders;
 - Use `DECIMAL(p, s)` over `FLOAT` for any monetary or financial values
 - Use `CAST()` over vendor-specific functions like `CONVERT()` or PostgreSQL's `::` operator for portability
 - Always cast explicitly when mixing types in comparisons or calculations
+- Use `VARCHAR(n)` over `TEXT` for portable queries — `TEXT` is not core ANSI SQL
 - Use `VARCHAR` over `CHAR` for variable-length strings — `CHAR` pads with spaces and can cause comparison issues
+- Use `EXTRACT()` to get date parts rather than casting dates to integers — integer conversion of dates is not reliable across platforms
 - Use `CURRENT_DATE` and `CURRENT_TIMESTAMP` instead of vendor functions like `GETDATE()` or `NOW()`
-- Use `EXTRACT()` for date parts instead of `YEAR()`, `MONTH()`, `DAY()` vendor functions

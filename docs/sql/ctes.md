@@ -57,13 +57,17 @@ Multiple CTEs are separated by commas. Each one can reference the CTEs defined b
 ```sql
 WITH monthly_sales AS (
     SELECT
-        DATE_TRUNC('month', order_date) AS month,
-        SUM(amount)                     AS total
+        EXTRACT(YEAR  FROM order_date) AS year,
+        EXTRACT(MONTH FROM order_date) AS month,
+        SUM(amount)                    AS total
     FROM orders
-    GROUP BY 1
+    GROUP BY
+        EXTRACT(YEAR  FROM order_date),
+        EXTRACT(MONTH FROM order_date)
 ),
 ranked_months AS (
     SELECT
+        year,
         month,
         total,
         RANK() OVER (ORDER BY total DESC) AS rank
@@ -72,6 +76,10 @@ ranked_months AS (
 SELECT *
 FROM ranked_months
 WHERE rank <= 3;
+```
+
+!!! note
+    `DATE_TRUNC` is a common alternative for truncating dates to month boundaries but is not ANSI SQL — it is supported in PostgreSQL and Snowflake but not in SQL Server. The `EXTRACT(YEAR ...)` / `EXTRACT(MONTH ...)` approach above is fully portable.
 ```
 
 !!! tip
@@ -167,6 +175,9 @@ ORDER BY total_revenue DESC;
 
 A recursive CTE references itself. It repeats until a termination condition is met — making it the standard tool for hierarchical and graph problems.
 
+!!! note
+    ANSI SQL uses `WITH RECURSIVE` to declare a recursive CTE. SQL Server uses plain `WITH` — the `RECURSIVE` keyword is not supported and will cause a syntax error in T-SQL. PostgreSQL, MySQL, and Snowflake all support `WITH RECURSIVE`.
+
 ### Syntax
 
 ```sql
@@ -218,6 +229,10 @@ FROM org_chart
 ORDER BY level, employee_id;
 ```
 
+!!! note
+    `REPEAT(string, n)` is supported in PostgreSQL, MySQL, and Snowflake but not in SQL Server, which uses `REPLICATE(string, n)` instead. Both serve the same purpose here — indenting names for display only.
+```
+
 ### Category Tree — Parent-Child Navigation
 
 ```sql
@@ -264,7 +279,7 @@ SELECT dt
 FROM date_spine;
 ```
 
-A date spine is useful for filling gaps in time series data — join it to your fact table to ensure every date appears even if no events occurred.
+A date spine is useful for filling gaps in time series data — join it to your fact table to ensure every date appears even if no events occurred. For the full treatment including joining to fact tables and handling gaps, see [Date Spine](../patterns-date-spine.md).
 
 !!! warning
     Recursive CTEs can run indefinitely if the termination condition is never met. Always verify your anchor and recursive parts produce a finite sequence. Use `FETCH FIRST n ROWS` during development to test safely.

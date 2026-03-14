@@ -72,6 +72,30 @@ WHERE o.order_id IS NULL;
 !!! tip
     This pattern — `LEFT JOIN` + `WHERE right_table.id IS NULL` — is one of the most useful in SQL. It finds rows in one table that have no corresponding row in another.
 
+### Filtering on a LEFT JOIN — ON vs WHERE
+
+Filtering on the right table in `WHERE` instead of `ON` accidentally converts a `LEFT JOIN` into an `INNER JOIN` — rows with no match are excluded because the `WHERE` condition fails on `NULL`.
+
+```sql
+-- Accidentally turns LEFT JOIN into INNER JOIN
+-- Customers with no orders are excluded because o.status IS NULL
+SELECT *
+FROM customers c
+LEFT JOIN orders o ON c.customer_id = o.customer_id
+WHERE o.status = 'completed';
+
+-- Correct — filter in ON to preserve all customers
+-- Customers with no matching completed order still appear, with NULL order columns
+SELECT *
+FROM customers c
+LEFT JOIN orders o
+    ON c.customer_id = o.customer_id
+    AND o.status = 'completed';
+```
+
+!!! warning
+    Always filter on the right table in the `ON` clause, not in `WHERE`, when you need to preserve all rows from the left table.
+
 ---
 
 ## RIGHT JOIN
@@ -158,6 +182,38 @@ JOIN targets t
 
 ---
 
+## Non-Equi Joins
+
+Most joins use equality (`=`) in the `ON` clause, but SQL supports any comparison operator. Non-equi joins are useful for range lookups, tiered rules, and interval-based matching.
+
+```sql
+-- Assign a discount tier based on order amount
+SELECT
+    o.order_id,
+    o.amount,
+    t.tier_name,
+    t.discount_pct
+FROM orders o
+JOIN discount_tiers t
+    ON o.amount >= t.min_amount
+    AND o.amount <  t.max_amount;
+
+-- Match transactions to the exchange rate valid on that date
+SELECT
+    t.transaction_id,
+    t.amount,
+    r.rate
+FROM transactions t
+JOIN exchange_rates r
+    ON t.transaction_date >= r.valid_from
+    AND t.transaction_date <  r.valid_to;
+```
+
+!!! tip
+    Non-equi joins can produce large intermediate result sets if the ranges overlap or are poorly defined. Ensure range conditions are mutually exclusive and always verify row counts after joining.
+
+---
+
 ## Joining More Than Two Tables
 
 ```sql
@@ -207,25 +263,30 @@ The `JOIN` approach is generally preferred — it is more readable and gives the
 
 ---
 
-## Best Practices
+## NATURAL JOIN and USING
 
-- Always use explicit `JOIN` syntax — never use comma-separated tables in `FROM`
-- Always alias tables in multi-table queries
-- Use `LEFT JOIN` instead of `RIGHT JOIN` for consistency — swap the table order if needed
-- Filter on the joined table in `ON` when possible, not in `WHERE`, to avoid accidentally converting a `LEFT JOIN` into an `INNER JOIN`
-- Be careful with `CROSS JOIN` and `FULL OUTER JOIN` on large tables — they can produce very large result sets
+`NATURAL JOIN` automatically joins on all columns with matching names in both tables — no `ON` clause needed. `USING` is a more controlled version that specifies which shared column to join on.
 
 ```sql
--- This accidentally turns a LEFT JOIN into an INNER JOIN
-SELECT *
-FROM customers c
-LEFT JOIN orders o ON c.customer_id = o.customer_id
-WHERE o.status = 'completed';   -- excludes NULLs from left join
+-- NATURAL JOIN — joins on all columns with the same name
+SELECT * FROM orders NATURAL JOIN customers;
 
--- Correct — filter in the ON clause to preserve all customers
-SELECT *
-FROM customers c
-LEFT JOIN orders o
-    ON c.customer_id = o.customer_id
-    AND o.status = 'completed';
+-- USING — joins on a specific shared column name
+SELECT o.order_id, c.first_name
+FROM orders o
+JOIN customers c USING (customer_id);
 ```
+
+!!! warning
+    Avoid `NATURAL JOIN` in production queries. It joins implicitly on all matching column names — adding or renaming a column in either table silently changes the join behavior. Always use explicit `ON` conditions for reliability and clarity. `USING` is safer than `NATURAL JOIN` but still requires both tables to share the exact column name.
+
+---
+
+## Best Practices
+
+- Always use explicit `JOIN` syntax with `ON` — never use comma-separated tables in `FROM` or `NATURAL JOIN`
+- Always alias tables in multi-table queries
+- Use `LEFT JOIN` instead of `RIGHT JOIN` for consistency — swap the table order if needed
+- Filter on the right table in `ON`, not in `WHERE`, to avoid accidentally converting a `LEFT JOIN` into an `INNER JOIN`
+- Be careful with `CROSS JOIN` and `FULL OUTER JOIN` on large tables — they can produce very large result sets
+- Verify row counts after non-equi joins — overlapping ranges can silently multiply rows

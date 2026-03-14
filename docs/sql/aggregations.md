@@ -132,13 +132,13 @@ SELECT
     COUNT(CASE WHEN status = 'cancelled' THEN 1 END) AS cancelled
 FROM orders;
 
--- Revenue by quarter
+-- Revenue by quarter — portable ANSI SQL using MONTH
 SELECT
     EXTRACT(YEAR FROM order_date) AS year,
-    SUM(CASE WHEN EXTRACT(QUARTER FROM order_date) = 1 THEN amount ELSE 0 END) AS q1,
-    SUM(CASE WHEN EXTRACT(QUARTER FROM order_date) = 2 THEN amount ELSE 0 END) AS q2,
-    SUM(CASE WHEN EXTRACT(QUARTER FROM order_date) = 3 THEN amount ELSE 0 END) AS q3,
-    SUM(CASE WHEN EXTRACT(QUARTER FROM order_date) = 4 THEN amount ELSE 0 END) AS q4
+    SUM(CASE WHEN EXTRACT(MONTH FROM order_date) <= 3  THEN amount ELSE 0 END) AS q1,
+    SUM(CASE WHEN EXTRACT(MONTH FROM order_date) <= 6  THEN amount ELSE 0 END) AS q2,
+    SUM(CASE WHEN EXTRACT(MONTH FROM order_date) <= 9  THEN amount ELSE 0 END) AS q3,
+    SUM(CASE WHEN EXTRACT(MONTH FROM order_date) <= 12 THEN amount ELSE 0 END) AS q4
 FROM orders
 GROUP BY EXTRACT(YEAR FROM order_date)
 ORDER BY year;
@@ -186,8 +186,20 @@ The result includes:
 - One subtotal row per `country` (year = NULL)
 - One grand total row (both NULL)
 
+Use `COALESCE` to replace the NULL markers with readable labels:
+
+```sql
+SELECT
+    COALESCE(country, 'All Countries')                                         AS country,
+    COALESCE(CAST(EXTRACT(YEAR FROM order_date) AS VARCHAR), 'All Years')      AS year,
+    SUM(amount)                                                                AS total_revenue
+FROM orders
+GROUP BY ROLLUP (country, EXTRACT(YEAR FROM order_date))
+ORDER BY country, year;
+```
+
 !!! tip
-    `ROLLUP` is ANSI SQL and supported in PostgreSQL, SQL Server, MySQL, and most modern databases. Use `COALESCE(country, 'Grand Total')` to label the NULL rows.
+    `ROLLUP` is ANSI SQL and supported in PostgreSQL, SQL Server, MySQL, and most modern databases.
 
 ---
 

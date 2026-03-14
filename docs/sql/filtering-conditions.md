@@ -43,7 +43,7 @@ WHERE status NOT IN ('cancelled', 'refunded');
 ```
 
 !!! warning
-    Avoid `NOT IN` when the list comes from a subquery that might return `NULL` — it causes the entire condition to return no rows. Use `NOT EXISTS` instead.
+    Avoid `NOT IN` when the list comes from a subquery that might return `NULL` — it causes the entire condition to return no rows. Use `NOT EXISTS` instead. See [EXISTS and NOT EXISTS](#exists-and-not-exists) below.
 
 ### BETWEEN
 
@@ -74,6 +74,60 @@ SELECT * FROM customers WHERE code LIKE 'A_C';
 
 !!! tip
     Leading wildcards (`LIKE '%value'`) cannot use indexes and will cause full table scans on large tables. Avoid them in performance-critical queries.
+
+---
+
+## EXISTS and NOT EXISTS
+
+`EXISTS` checks whether a subquery returns any rows. It returns `TRUE` if at least one row matches, `FALSE` if none do. No data from the subquery is returned — only the presence or absence of a match matters.
+
+```sql
+-- Customers who have placed at least one order
+SELECT customer_id, first_name
+FROM customers c
+WHERE EXISTS (
+    SELECT 1
+    FROM orders o
+    WHERE o.customer_id = c.customer_id
+);
+
+-- Customers who have never placed an order
+SELECT customer_id, first_name
+FROM customers c
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM orders o
+    WHERE o.customer_id = c.customer_id
+);
+```
+
+!!! tip
+    `SELECT 1` inside an `EXISTS` subquery is a convention — the actual value returned does not matter. The database only checks whether any row exists.
+
+### EXISTS vs IN
+
+Both can express "rows that match a list", but they behave differently when NULLs are involved:
+
+```sql
+-- IN — fails silently when the subquery returns NULLs
+SELECT * FROM customers
+WHERE customer_id NOT IN (
+    SELECT customer_id FROM orders  -- if any customer_id is NULL here, returns no rows
+);
+
+-- NOT EXISTS — handles NULLs correctly
+SELECT * FROM customers c
+WHERE NOT EXISTS (
+    SELECT 1 FROM orders o
+    WHERE o.customer_id = c.customer_id
+);
+```
+
+!!! tip
+    Prefer `EXISTS` / `NOT EXISTS` over `IN` / `NOT IN` when the list comes from a subquery. It is safer with NULLs and often performs better on large datasets.
+
+!!! note
+    `EXISTS` always wraps a correlated subquery. For advanced patterns — including correlated vs non-correlated subqueries and performance considerations — see [Subqueries](subqueries.md).
 
 ---
 
@@ -151,12 +205,6 @@ SELECT
     first_name,
     COALESCE(phone, email, 'No contact') AS contact
 FROM customers;
-
--- Safe division — avoid divide by zero via NULL
-SELECT
-    order_id,
-    revenue / NULLIF(units, 0) AS revenue_per_unit
-FROM orders;
 ```
 
 ### NULLIF
@@ -204,5 +252,6 @@ SELECT COUNT(*) - COUNT(rating) AS null_count FROM reviews;
 - Use `IS NULL` / `IS NOT NULL` — never `= NULL`
 - Use `COALESCE` and `NULLIF` over vendor-specific null functions
 - Use `CASE WHEN` over vendor-specific conditional functions for portability
+- Prefer `NOT EXISTS` over `NOT IN` when the list comes from a subquery
 - Filter as early as possible — reduce rows before joining or aggregating
 - Be explicit about `NULL` behavior in every filter and aggregation

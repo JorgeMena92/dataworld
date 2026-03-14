@@ -95,13 +95,13 @@ SELECT product_id FROM sales WHERE EXTRACT(YEAR FROM sale_date) = 2024;
 ```
 
 !!! warning
-    `INTERSECT` is not supported in MySQL. Use an `INNER JOIN` or `IN` subquery as a workaround.
+    `INTERSECT` is not supported in MySQL before version 8.0. If targeting older MySQL versions, use an `INNER JOIN` or `IN` subquery as a workaround.
 
 ---
 
 ## EXCEPT
 
-Returns rows from the first query that do **not** appear in the second. Called `MINUS` in Oracle.
+Returns rows from the first query that do **not** appear in the second.
 
 ```sql
 -- Users who logged in but did NOT make a purchase
@@ -170,6 +170,35 @@ Use set operations when you are comparing whole result sets. Use JOINs when you 
 
 ---
 
+## Operator Precedence
+
+When chaining multiple set operations, `INTERSECT` has higher precedence than `UNION` and `EXCEPT` in ANSI SQL. This can produce unexpected results if parentheses are not used explicitly.
+
+```sql
+-- Without parentheses — INTERSECT binds first
+-- Evaluated as: A UNION (B INTERSECT C)
+SELECT user_id FROM table_a
+UNION
+SELECT user_id FROM table_b
+INTERSECT
+SELECT user_id FROM table_c;
+
+-- With parentheses — explicit and unambiguous
+-- Evaluated as: (A UNION B) INTERSECT C
+SELECT user_id FROM (
+    SELECT user_id FROM table_a
+    UNION
+    SELECT user_id FROM table_b
+) combined
+INTERSECT
+SELECT user_id FROM table_c;
+```
+
+!!! tip
+    Always use parentheses or CTEs when combining more than two set operations. Relying on implicit precedence makes queries harder to read and easier to get wrong.
+
+---
+
 ## Vendor Notes
 
 | Operation | ANSI SQL | SQL Server | PostgreSQL | MySQL | Oracle |
@@ -186,5 +215,6 @@ Use set operations when you are comparing whole result sets. Use JOINs when you 
 - Use `UNION ALL` by default — only switch to `UNION` when deduplication is required
 - Use `INTERSECT` and `EXCEPT` for clean dataset comparisons instead of forcing everything into joins
 - Always place `ORDER BY` at the end of the full set operation, not inside individual queries
-- Be aware of `INTERSECT` and `EXCEPT` support gaps in MySQL and Oracle's `MINUS` naming
+- Use parentheses or CTEs when chaining more than two set operations — `INTERSECT` has higher precedence than `UNION` and `EXCEPT`
+- Be aware of `INTERSECT` and `EXCEPT` limitations in MySQL before 8.0 and Oracle's `MINUS` naming
 - When portability matters, rewrite `INTERSECT` and `EXCEPT` as `JOIN` or `LEFT JOIN + WHERE NULL` patterns

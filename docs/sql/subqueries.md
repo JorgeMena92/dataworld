@@ -109,13 +109,13 @@ WHERE product_id NOT IN (
 ```
 
 !!! warning
-    Avoid `NOT IN` when the subquery might return `NULL` values — it causes the entire condition to return no rows. Use `NOT EXISTS` instead for safer results.
+    Avoid `NOT IN` when the subquery might return `NULL` values — it causes the entire condition to return no rows. See [EXISTS and NOT EXISTS](#exists-and-not-exists) below for the safer alternative.
 
 ---
 
 ## EXISTS and NOT EXISTS
 
-`EXISTS` returns true if the subquery returns at least one row. It stops scanning as soon as a match is found — often faster than `IN` on large datasets.
+`EXISTS` returns true if the subquery returns at least one row. It stops scanning as soon as a match is found — often faster than `IN` on large datasets. For a conceptual introduction, see [Filtering & Conditions](filtering-conditions.md).
 
 ```sql
 -- Customers who have placed at least one order
@@ -180,6 +180,29 @@ FROM orders o;
 
 !!! tip
     Correlated subqueries are intuitive to write but can be slow — they execute once per row. On large tables, rewrite them as a `JOIN` or CTE with a window function for better performance.
+
+The highest-paid per department example above can be rewritten using `RANK()` — which scans the table once instead of once per row:
+
+```sql
+-- Rewrite using a window function — much faster on large tables
+SELECT employee_id, first_name, department, salary
+FROM (
+    SELECT
+        employee_id,
+        first_name,
+        department,
+        salary,
+        RANK() OVER (
+            PARTITION BY department
+            ORDER BY salary DESC
+        ) AS rnk
+    FROM employees
+) ranked
+WHERE rnk = 1;
+```
+
+!!! note
+    `RANK()` assigns the same rank to ties — if two employees share the highest salary in a department, both rows are returned. Use `ROW_NUMBER()` if you want exactly one row per department regardless of ties. See [Window Functions](window-functions.md) for a full explanation.
 
 ---
 

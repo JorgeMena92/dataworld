@@ -30,21 +30,17 @@ ORDER BY department ASC, salary DESC;
 ### ORDER BY with Expressions
 
 ```sql
--- Sort by a calculated value
+-- Sort by a calculated value — ANSI SQL, always portable
 SELECT
     first_name,
     last_name,
     salary * 12 AS annual_salary
 FROM employees
 ORDER BY salary * 12 DESC;
-
--- Sort by alias (supported in most databases, not strict ANSI)
-SELECT
-    first_name,
-    salary * 12 AS annual_salary
-FROM employees
-ORDER BY annual_salary DESC;
 ```
+
+!!! warning
+    Sorting by a column alias (`ORDER BY annual_salary DESC`) is supported in most databases but is not strict ANSI SQL. Repeat the expression in `ORDER BY` for portable queries.
 
 ### ORDER BY with CASE WHEN
 
@@ -125,7 +121,7 @@ OFFSET 10 ROWS FETCH NEXT 10 ROWS ONLY;
 
 ## Top-N Queries
 
-Return the highest or lowest N values per group — a very common analytics pattern.
+Return the highest or lowest N values — a very common analytics pattern.
 
 ```sql
 -- Top 5 orders by amount
@@ -133,8 +129,12 @@ SELECT order_id, amount
 FROM orders
 ORDER BY amount DESC
 FETCH FIRST 5 ROWS ONLY;
+```
 
--- Top 3 employees per department using ROW_NUMBER
+For **Top-N per group** — for example, the top 3 employees by salary within each department — `FETCH FIRST` alone is not enough. That requires `ROW_NUMBER()`, a window function that assigns a sequential number to each row within a partition:
+
+```sql
+-- Top 3 employees per department by salary
 SELECT *
 FROM (
     SELECT
@@ -149,6 +149,9 @@ FROM (
 ) ranked
 WHERE rn <= 3;
 ```
+
+!!! note
+    `ROW_NUMBER()` is a window function. If you are not familiar with window functions yet, the pattern above assigns a rank number per group (`PARTITION BY department`) and the outer query filters to keep only the top rows. See [Window Functions](window-functions.md) for a full explanation.
 
 ---
 
@@ -191,6 +194,7 @@ SELECT * FROM orders WHERE ROWNUM <= 10 ORDER BY created_at DESC;
 
 - Always include `ORDER BY` when using `FETCH FIRST` or `LIMIT` — results without ordering are non-deterministic
 - Use `FETCH FIRST` over `LIMIT` or `TOP` for cross-platform portability
-- Use `ROW_NUMBER()` for Top-N per group — `FETCH FIRST` only limits the overall result
+- Repeat expressions in `ORDER BY` rather than referencing aliases — alias sorting is not ANSI SQL
+- Use `ROW_NUMBER()` for Top-N per group — `FETCH FIRST` only limits the overall result set
 - Avoid deep `OFFSET` pagination on large tables — switch to keyset pagination for performance
 - Use `NULLS FIRST` / `NULLS LAST` explicitly when NULLs in sorted columns matter for correctness

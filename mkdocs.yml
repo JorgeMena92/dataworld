@@ -74,6 +74,7 @@ nav:
       - Filtering & Conditions: sql/filtering-conditions.md
       - Sorting & Limiting: sql/sorting-limiting.md
       - Data Types & Casting: sql/data-types-casting.md
+      - Scalar Functions: sql/scalar-functions.md
       - Aggregations: sql/aggregations.md
       - JOINs: sql/joins.md
       - Set Operations: sql/set-operations.md
@@ -97,6 +98,7 @@ nav:
       - DROP: sql/drop.md
       - TRUNCATE: sql/truncate.md
       - Constraints: sql/constraints.md
+      - Data Integrity: sql/data-integrity.md
       - Indexes: sql/indexes-ddl.md
       - Naming Conventions: sql/naming-conventions.md
       - Schema Design: sql/schema-design.md
@@ -106,23 +108,22 @@ nav:
       - Functions: sql/functions.md
       - Stored Procedures: sql/stored-procedures.md
       - Triggers: sql/triggers.md
-    - Data Integrity: sql/data-integrity.md
     - Performance:
+      - Execution Plans: sql/execution-plans.md
       - Query Optimization: sql/query-optimization.md
       - Indexes: sql/indexes.md
-      - Execution Plans: sql/execution-plans.md
       - Partitioning: sql/partitioning.md
     - SQL Patterns:
-          - Gaps and Islands: sql/patterns-gaps-islands.md
-          - Running Totals: sql/patterns-running-totals.md
-          - Deduplication: sql/patterns-deduplication.md
-          - Latest Record per Group: sql/patterns-latest-record.md
-          - Top-N per Group: sql/patterns-top-n-per-group.md
-          - Sessionization: sql/patterns-sessionization.md
-          - Pivot and Unpivot: sql/patterns-pivot.md
-          - Slowly Changing Dimensions: sql/patterns-scd.md
-          - Date Spine: sql/patterns-date-spine.md
-          - Idempotent Operations: sql/patterns-idempotent.md
+      - Gaps and Islands: sql/patterns-gaps-islands.md
+      - Running Totals: sql/patterns-running-totals.md
+      - Deduplication: sql/patterns-deduplication.md
+      - Latest Record per Group: sql/patterns-latest-record.md
+      - Top-N per Group: sql/patterns-top-n-per-group.md
+      - Sessionization: sql/patterns-sessionization.md
+      - Pivot and Unpivot: sql/patterns-pivot.md
+      - Slowly Changing Dimensions: sql/patterns-scd.md
+      - Date Spine: sql/patterns-date-spine.md
+      - Idempotent Operations: sql/patterns-idempotent.md
   - Power BI:
     - powerbi/index.md
     - Fundamentals: powerbi/fundamentals.md

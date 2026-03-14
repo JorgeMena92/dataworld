@@ -209,7 +209,7 @@ SUM(amount) OVER (ORDER BY order_date RANGE BETWEEN 6 PRECEDING AND CURRENT ROW)
 
 ---
 
-## FIRST_VALUE and LAST_VALUE
+## FIRST_VALUE, LAST_VALUE, and NTH_VALUE
 
 ```sql
 SELECT
@@ -223,12 +223,46 @@ SELECT
         PARTITION BY department
         ORDER BY salary DESC
         ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
-    ) AS lowest_in_dept
+    ) AS lowest_in_dept,
+    NTH_VALUE(salary, 2) OVER (
+        PARTITION BY department
+        ORDER BY salary DESC
+        ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+    ) AS second_highest_in_dept
 FROM employees;
 ```
 
 !!! warning
-    `LAST_VALUE` requires an explicit frame of `ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING` — otherwise it defaults to only looking up to the current row and returns the current row's value.
+    `LAST_VALUE` and `NTH_VALUE` require an explicit frame of `ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING` — otherwise the default frame only looks up to the current row and returns the current row's value instead of the true last or nth value in the partition.
+
+---
+
+## Named Windows
+
+When the same `OVER()` definition is used multiple times in a query, it can be named with a `WINDOW` clause to avoid repetition.
+
+```sql
+SELECT
+    employee_id,
+    salary,
+    AVG(salary) OVER w AS dept_avg,
+    MAX(salary) OVER w AS dept_max,
+    MIN(salary) OVER w AS dept_min
+FROM employees
+WINDOW w AS (PARTITION BY department ORDER BY salary DESC);
+```
+
+!!! warning
+    The `WINDOW` clause is ANSI SQL but is not supported in SQL Server. In SQL Server, repeat the `OVER()` definition for each function explicitly:
+    ```sql
+    SELECT
+        employee_id,
+        salary,
+        AVG(salary) OVER (PARTITION BY department ORDER BY salary DESC) AS dept_avg,
+        MAX(salary) OVER (PARTITION BY department ORDER BY salary DESC) AS dept_max,
+        MIN(salary) OVER (PARTITION BY department ORDER BY salary DESC) AS dept_min
+    FROM employees;
+    ```
 
 ---
 
@@ -283,7 +317,7 @@ Use `GROUP BY` when you want a summary. Use window functions when you want the d
 | Period-over-period change | `LAG()` |
 | Rolling average | `AVG() OVER (ROWS BETWEEN ...)` |
 | Percentile / distribution | `PERCENT_RANK()`, `NTILE()` |
-| First / last value in group | `FIRST_VALUE()`, `LAST_VALUE()` |
+| First / last / nth value in group | `FIRST_VALUE()`, `LAST_VALUE()`, `NTH_VALUE()` |
 | % of total within group | `SUM() OVER (PARTITION BY ...)` |
 
 ---
@@ -291,19 +325,7 @@ Use `GROUP BY` when you want a summary. Use window functions when you want the d
 ## Best Practices
 
 - Name window expressions clearly with aliases — `dept_avg`, `running_total`, not just `avg`
-- Reuse the same `OVER()` definition with a named window when using the same window multiple times
+- Use named windows (`WINDOW` clause) to avoid repeating the same `OVER()` definition — but note SQL Server requires explicit repetition
 - Use `ROWS` instead of `RANGE` for rolling calculations unless you specifically need to handle ties
-- Always add an explicit frame when using `LAST_VALUE` — the default frame will give unexpected results
+- Always add an explicit frame when using `LAST_VALUE` or `NTH_VALUE` — the default frame will give unexpected results
 - Avoid window functions on very large unfiltered datasets — filter first in a CTE, then apply the window
-
-```sql
--- Named window — avoids repeating the same OVER() clause
-SELECT
-    employee_id,
-    salary,
-    AVG(salary)  OVER w AS dept_avg,
-    MAX(salary)  OVER w AS dept_max,
-    MIN(salary)  OVER w AS dept_min
-FROM employees
-WINDOW w AS (PARTITION BY department ORDER BY salary DESC);
-```

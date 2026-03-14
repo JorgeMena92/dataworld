@@ -7,15 +7,11 @@ description: Work from the presentation layer inward to the data source, then ch
 
 Work from the **presentation layer inward** to the data source, then check infrastructure and security. Eliminate each layer before proceeding to the next.
 
-## Environment & Assumptions
+## Context
 
-This framework is designed for a **Microsoft Azure-based data platform**. The BI layer is built on **Power BI**, used for report authoring, dataset management, and scheduled refresh. <br>
+This framework applies to any modern cloud data platform — regardless of the specific tools used. It was originally designed for a **Microsoft Azure** stack (Power BI, Databricks, ADF, Fabric, ADLS Gen2) and some examples reflect that context, but the layer structure and troubleshooting logic transfer to any equivalent platform.
 
-Data transformation and processing runs on **Azure Databricks**, leveraging PySpark notebooks and Workflows for job orchestration. <br>
-
-Pipeline ingestion and movement is handled through **Azure Data Factory (ADF)**, with **Microsoft Fabric** progressively adopted as the unified analytics layer bridging pipelines, lakehouses, and semantic models. <br>
-
-Underlying storage relies on **Azure Data Lake Storage (ADLS Gen2)** as the primary data store across bronze, silver, and gold zones. Identity, access control, and authentication are managed through **Azure Active Directory (Azure AD)**, including service principals, managed identities, and role-based access control across all platform components.
+The seven layers cover the full stack from what the end user sees down to infrastructure and security — each one a potential root cause for data incidents, refresh failures, or access issues.
 
 ## Troubleshooting Flow
 
@@ -37,17 +33,17 @@ Underlying storage relies on **Azure Data Lake Storage (ADLS Gen2)** as the prim
       <summary class="fw-layer-head">
         <span class="fw-info">
           <span class="fw-name">📊 1. Presentation Layer</span>
-          <span class="fw-sub">Power BI Visuals / Reports</span>
+          <span class="fw-sub">Visuals · Reports · Dashboards</span>
         </span>
       </summary>
       <div class="fw-body">
         <ul>
-          <li>Check Power BI visuals for incorrect data, blank results, or rendering errors</li>
+          <li>Check report visuals for incorrect data, blank results, or rendering errors</li>
           <li>Validate report-level, page-level, and visual-level filters for unintended overrides</li>
-          <li>Inspect slicer interactions and cross-filter behaviour between visuals</li>
+          <li>Inspect filter controls and cross-filter behaviour between visuals</li>
           <li>Confirm correct fields and measures are bound to the right visuals</li>
           <li>Test row-level security behaviour across different user profiles</li>
-          <li>Verify dataset refresh status — last successful run, failure message</li>
+          <li>Verify data refresh status — last successful run, failure message</li>
         </ul>
       </div>
     </details>
@@ -55,16 +51,16 @@ Underlying storage relies on **Azure Data Lake Storage (ADLS Gen2)** as the prim
     <details class="fw-layer">
       <summary class="fw-layer-head">
         <span class="fw-info">
-          <span class="fw-name">🗂️ 2. Semantic Model / Data Model Layer</span>
-          <span class="fw-sub">Dataset · DAX · Relationships</span>
+          <span class="fw-name">🗂️ 2. Semantic Model Layer</span>
+          <span class="fw-sub">Measures · Relationships · Filters</span>
         </span>
       </summary>
       <div class="fw-body">
         <ul>
-          <li>Validate DAX measures and calculated columns for logic regressions or context errors</li>
+          <li>Validate measures and calculated columns for logic regressions or context errors</li>
           <li>Inspect table relationships — cardinality, cross-filter direction, ambiguous paths</li>
-          <li>Check filtering logic — bidirectional filters, inactive relationships, USERELATIONSHIP</li>
-          <li>Review Power Query transformations for errors or broken dependencies</li>
+          <li>Check filtering logic — bidirectional filters, inactive relationship overrides</li>
+          <li>Data preparation steps for errors or broken dependencies</li>
           <li>Verify data types and schema consistency (type mismatch = silent error)</li>
           <li>Check incremental refresh configuration and partition boundaries</li>
         </ul>
@@ -81,7 +77,7 @@ Underlying storage relies on **Azure Data Lake Storage (ADLS Gen2)** as the prim
       <div class="fw-body">
         <ul>
           <li>Review SQL transformation logic for recent changes or regressions</li>
-          <li>Inspect Databricks notebooks and PySpark jobs — execution logs, stack traces</li>
+          <li>Inspect transformation scripts and processing jobs — execution logs, stack traces</li>
           <li>Validate ingestion pipelines — source extraction, landing zone delivery, file formats</li>
           <li>Check joins and aggregations for fan-out, duplicates, or data loss</li>
           <li>Verify null handling, data cleaning rules, and edge case coverage</li>
@@ -95,14 +91,14 @@ Underlying storage relies on **Azure Data Lake Storage (ADLS Gen2)** as the prim
       <summary class="fw-layer-head">
         <span class="fw-info">
           <span class="fw-name">🔄 4. Pipeline / Orchestration Layer</span>
-          <span class="fw-sub">Databricks Jobs · Scheduling</span>
+          <span class="fw-sub">Jobs · Triggers · Orchestration</span>
         </span>
       </summary>
       <div class="fw-body">
         <ul>
-          <li>Check pipeline execution status in ADF / Databricks Workflows / Fabric</li>
+          <li>Check pipeline execution status in orchestration tool</li>
           <li>Review job run logs — focus on the root error, not downstream cascade failures</li>
-          <li>Inspect Databricks job DAG — identify the specific failing task</li>
+          <li>Inspect job dependency graph — identify the specific failing task</li>
           <li>Validate job dependencies — missing upstream output blocks all downstream steps</li>
           <li>Check scheduling and trigger configuration for missed or duplicated runs</li>
           <li>Verify upstream job completion and output availability before next stage</li>
@@ -135,18 +131,18 @@ Underlying storage relies on **Azure Data Lake Storage (ADLS Gen2)** as the prim
       <summary class="fw-layer-head">
         <span class="fw-info">
           <span class="fw-name">☁️ 6. Infrastructure / Platform Layer</span>
-          <span class="fw-sub">Azure Services · Compute · Networking</span>
+          <span class="fw-sub">Compute · Networking · Platform Services</span>
         </span>
       </summary>
       <div class="fw-body">
         <ul>
-          <li>Check Azure Service Health and Databricks status page for active incidents</li>
-          <li>Verify Power BI gateway status and data source bindings</li>
-          <li>Inspect Databricks cluster health — state, driver logs, autoscaling behaviour</li>
-          <li>Validate Azure compute capacity — ADF integration runtime, Fabric capacity throttling</li>
-          <li>Check networking — VNet peering, Private Link endpoints, DNS resolution</li>
+          <li>Check platform status page and service health dashboard for active incidents</li>
+          <li>Verify data gateway or connector service status and data source bindings</li>
+          <li>Inspect compute cluster health — state, driver logs, autoscaling behaviour</li>
+          <li>Validate Azure compute capacity — compute capacity and runtime throttling</li>
+          <li>Check network peering, private endpoints, DNS resolution</li>
           <li>Inspect authentication tokens and service account / managed identity expiry</li>
-          <li>Verify Azure Data Lake Storage availability and tier configuration</li>
+          <li>Verify object storage availability and tier configuration and tier configuration</li>
         </ul>
       </div>
     </details>
@@ -155,18 +151,18 @@ Underlying storage relies on **Azure Data Lake Storage (ADLS Gen2)** as the prim
       <summary class="fw-layer-head">
         <span class="fw-info">
           <span class="fw-name">🔒 7. Security / Access Layer</span>
-          <span class="fw-sub">Cross-cutting — can surface at any layer above</span>
+          <span class="fw-sub">Permissions · Identity · Access Control</span>
         </span>
       </summary>
       <div class="fw-body">
         <ul>
-          <li>Check Power BI workspace roles and per-report sharing settings</li>
-          <li>Validate dataset access permissions and sensitivity label restrictions</li>
-          <li>Verify service principal credentials, client secret expiry, and assigned roles</li>
-          <li>Inspect ADLS container ACLs and storage account access policies</li>
-          <li>Validate row-level security — role definitions, DAX filter expressions, user membership</li>
-          <li>Confirm Azure AD group memberships and RBAC role assignments for affected users or SPNs</li>
-          <li>Check Databricks workspace permissions — cluster policies, secret scope access, Unity Catalog grants</li>
+          <li>Check workspace roles and report-level sharing settings</li>
+          <li>Validate data asset access permissions and classification or sensitivity restrictions</li>
+          <li>Verify service account credentials, secret or token expiry, and assigned roles</li>
+          <li>Inspect storage container access policies</li>
+          <li>Validate row-level security — role definitions, filter expressions, user membership</li>
+          <li>Confirm identity provider group memberships and RBAC role assignments for affected users or service accounts</li>
+          <li>Check data platform permissions and catalog grants</li>
         </ul>
       </div>
     </details>
@@ -301,7 +297,7 @@ Underlying storage relies on **Azure Data Lake Storage (ADLS Gen2)** as the prim
 [data-md-color-scheme="slate"] .fw-sub { color: var(--brand-muted, #606060); }
 
 .fw-body {
-  padding: 6px 16px 12px 48px;
+  padding: 6px 16px 12px 6px;
   border-top: 1px solid var(--brand-border, #e0e0e0);
 }
 [data-md-color-scheme="slate"] .fw-body {
@@ -310,7 +306,7 @@ Underlying storage relies on **Azure Data Lake Storage (ADLS Gen2)** as the prim
 
 .fw-body ul {
   margin: 4px 0 0;
-  padding-left: 1rem;
+  padding-left: 0.5rem;
   display: flex;
   flex-direction: column;
   gap: 3px;
