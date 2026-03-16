@@ -120,6 +120,9 @@ WHERE updated_at = (
 );
 ```
 
+!!! warning
+    If two rows share the same `MAX(updated_at)` for a customer, this query returns both rows — not just one. Use `ROW_NUMBER()` when you need exactly one row per group regardless of ties.
+
 !!! tip
     Prefer `ROW_NUMBER()` over the correlated subquery on large tables — the subquery executes once per row of the outer query.
 
@@ -135,6 +138,9 @@ These patterns are related but serve different purposes:
 | Source | History table, changelog, repeated loads | Table with accidental duplicates |
 | Rows per key | Expected — it's a design | Unexpected — it's a data quality issue |
 | Method | `ROW_NUMBER() ... ORDER BY date DESC` | `ROW_NUMBER()` or `DISTINCT` |
+
+!!! note
+    For the full deduplication treatment including pipeline patterns and DELETE strategies, see [Deduplication](patterns-deduplication.md). For building dimension tables where each entity needs a current and historical record, see [Slowly Changing Dimensions](patterns-scd.md) — the latest record pattern is essentially reading SCD Type 1 current state.
 
 ---
 

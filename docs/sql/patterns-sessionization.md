@@ -8,6 +8,9 @@ tags: [sql, patterns, sessionization, window-functions]
 
 Sessionization groups a stream of user events into discrete sessions — periods of continuous activity separated by gaps of inactivity. It is a core pattern in product analytics, web analytics, and user behavior analysis.
 
+!!! note
+    Sessionization is the applied form of the maximum gap tolerance pattern. For the foundational concept of grouping consecutive sequences with allowed gaps, see [Gaps and Islands](patterns-gaps-islands.md).
+
 ---
 
 ## The Problem
@@ -40,27 +43,28 @@ WITH events_with_gap AS (
         LAG(event_time) OVER (
             PARTITION BY user_id
             ORDER BY event_time
-        ) AS prev_event_time,
-        EXTRACT(EPOCH FROM (
-            event_time - LAG(event_time) OVER (
-                PARTITION BY user_id
-                ORDER BY event_time
-            )
-        )) / 60 AS minutes_since_last_event
+        ) AS prev_event_time
     FROM user_events
 ),
 session_flags AS (
     SELECT
         *,
         CASE
-            WHEN minutes_since_last_event IS NULL THEN 1   -- first event for user
-            WHEN minutes_since_last_event > 30   THEN 1   -- gap exceeds threshold
+            WHEN prev_event_time IS NULL THEN 1   -- first event for user
+            -- Minutes since last event: use platform-appropriate function
+            -- PostgreSQL: EXTRACT(EPOCH FROM (event_time - prev_event_time)) / 60
+            -- SQL Server:  DATEDIFF(minute, prev_event_time, event_time)
+            -- MySQL:       TIMESTAMPDIFF(MINUTE, prev_event_time, event_time)
+            WHEN EXTRACT(EPOCH FROM (event_time - prev_event_time)) / 60 > 30 THEN 1
             ELSE 0
         END AS is_session_start
     FROM events_with_gap
 )
 SELECT * FROM session_flags;
 ```
+
+!!! note
+    `EXTRACT(EPOCH FROM interval)` is PostgreSQL syntax for converting an interval to seconds. SQL Server uses `DATEDIFF(minute, prev_event_time, event_time)` directly. MySQL uses `TIMESTAMPDIFF(MINUTE, prev_event_time, event_time)`. There is no ANSI SQL standard for interval-to-minutes conversion — adapt the minutes calculation to your platform.
 
 ---
 
@@ -74,19 +78,17 @@ WITH events_with_gap AS (
         user_id,
         event_time,
         event_type,
-        EXTRACT(EPOCH FROM (
-            event_time - LAG(event_time) OVER (
-                PARTITION BY user_id ORDER BY event_time
-            )
-        )) / 60 AS minutes_since_last
+        LAG(event_time) OVER (
+            PARTITION BY user_id ORDER BY event_time
+        ) AS prev_event_time
     FROM user_events
 ),
 session_flags AS (
     SELECT
         *,
         CASE
-            WHEN minutes_since_last IS NULL THEN 1
-            WHEN minutes_since_last > 30    THEN 1
+            WHEN prev_event_time IS NULL THEN 1
+            WHEN EXTRACT(EPOCH FROM (event_time - prev_event_time)) / 60 > 30 THEN 1
             ELSE 0
         END AS is_session_start
     FROM events_with_gap
@@ -123,18 +125,16 @@ WITH events_with_gap AS (
         user_id,
         event_time,
         event_type,
-        EXTRACT(EPOCH FROM (
-            event_time - LAG(event_time) OVER (
-                PARTITION BY user_id ORDER BY event_time
-            )
-        )) / 60 AS minutes_since_last
+        LAG(event_time) OVER (
+            PARTITION BY user_id ORDER BY event_time
+        ) AS prev_event_time
     FROM user_events
 ),
 session_flags AS (
     SELECT *,
         CASE
-            WHEN minutes_since_last IS NULL THEN 1
-            WHEN minutes_since_last > 30    THEN 1
+            WHEN prev_event_time IS NULL THEN 1
+            WHEN EXTRACT(EPOCH FROM (event_time - prev_event_time)) / 60 > 30 THEN 1
             ELSE 0
         END AS is_session_start
     FROM events_with_gap
@@ -152,10 +152,10 @@ sessions AS (
 SELECT
     user_id,
     session_number,
-    MIN(event_time)                                      AS session_start,
-    MAX(event_time)                                      AS session_end,
-    EXTRACT(EPOCH FROM MAX(event_time) - MIN(event_time)) / 60 AS duration_minutes,
-    COUNT(*)                                             AS event_count
+    MIN(event_time)                                                        AS session_start,
+    MAX(event_time)                                                        AS session_end,
+    EXTRACT(EPOCH FROM (MAX(event_time) - MIN(event_time))) / 60           AS duration_minutes,
+    COUNT(*)                                                               AS event_count
 FROM sessions
 GROUP BY user_id, session_number
 ORDER BY user_id, session_number;
@@ -165,25 +165,22 @@ ORDER BY user_id, session_number;
 
 ## Creating a Unique Session ID
 
-Generate a globally unique session identifier instead of a per-user sequence number.
+Generate a globally unique session identifier by combining user and session number.
 
 ```sql
--- Combine user_id and session_number into a unique key
+-- ANSI portable — combine user_id and session_number into a unique key
 SELECT
-    user_id || '-' || session_number AS session_id,
+    CONCAT(CAST(user_id AS VARCHAR), '-', CAST(session_number AS VARCHAR)) AS session_id,
     user_id,
     session_number,
     session_start,
     session_end,
     event_count
 FROM session_summary;
-
--- Or use a hash
-SELECT
-    MD5(user_id::TEXT || '-' || session_number::TEXT) AS session_id,
-    ...
-FROM session_summary;
 ```
+
+!!! note
+    Hash-based session IDs (e.g. `MD5(user_id || session_number)`) are common in practice but `MD5()` is not ANSI SQL — it is supported in PostgreSQL, MySQL, and Snowflake but not in SQL Server (which uses `HASHBYTES('MD5', ...)`). The `CONCAT + CAST` approach above is portable and sufficient for most use cases.
 
 ---
 
@@ -220,3 +217,4 @@ The session timeout (inactivity threshold) depends on the product and use case.
 - Store session IDs in the events table after computing them — avoid recomputing in every downstream query
 - Use a CTE pipeline (gap → flag → session number → aggregate) — each step is testable independently
 - Handle time zones carefully — convert all timestamps to UTC before sessionization
+- Use platform-appropriate interval functions for gap calculation — `EXTRACT(EPOCH FROM ...)` in PostgreSQL, `DATEDIFF` in SQL Server, `TIMESTAMPDIFF` in MySQL

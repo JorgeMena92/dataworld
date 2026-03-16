@@ -8,7 +8,8 @@ tags: [sql, ddl, indexes]
 
 An index is a database object that stores a sorted reference to data in a table, allowing the database engine to find rows without scanning the entire table. Indexes are created and managed with DDL commands.
 
-> This page covers indexes as **DDL objects** — what they are, how to create and manage them. For query optimization strategy and execution plans, see the **Performance** section.
+!!! note
+    This page covers indexes as **DDL objects** — what they are, how to create and manage them. For query optimization strategy and execution plans, see [Performance → Indexes](indexes.md).
 
 ---
 
@@ -92,16 +93,28 @@ ON orders (created_at)
 WHERE status = 'pending';
 ```
 
+!!! note
+    Partial indexes are supported in PostgreSQL, SQLite, and Snowflake. SQL Server supports the same concept under the name **filtered indexes** — the syntax is identical:
+    ```sql
+    -- SQL Server filtered index
+    CREATE INDEX idx_orders_pending
+    ON orders (created_at)
+    WHERE status = 'pending';
+    ```
+    MySQL does not support partial or filtered indexes.
+
 ---
 
 ## DROP INDEX
 
 ```sql
--- ANSI / PostgreSQL
+-- ANSI SQL
 DROP INDEX idx_orders_customer_id;
+
+-- Vendor extension — supported in PostgreSQL and MySQL, not in SQL Server
 DROP INDEX IF EXISTS idx_orders_customer_id;
 
--- SQL Server (requires table name)
+-- SQL Server — requires table name, no IF EXISTS support
 DROP INDEX idx_orders_customer_id ON orders;
 
 -- MySQL
@@ -132,6 +145,8 @@ ON customers USING HASH (customer_id);
 ---
 
 ## Listing Indexes
+
+There is no ANSI SQL standard for listing indexes — `INFORMATION_SCHEMA` does not cover index metadata. Use platform-specific system catalog queries instead.
 
 ```sql
 -- PostgreSQL
@@ -174,4 +189,5 @@ CREATE TABLE customers (
 - Drop unused indexes — they consume space and add write overhead with no read benefit
 - Rebuild or reorganize indexes periodically on tables with heavy write activity
 
-> For query execution analysis and index tuning strategies, see **Performance → Indexes**.
+!!! note
+    For query execution analysis and index tuning strategies, see [Performance → Indexes](indexes.md).

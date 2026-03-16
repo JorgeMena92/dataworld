@@ -6,7 +6,7 @@ tags: [sql, patterns, deduplication, window-functions]
 
 # Deduplication
 
-Deduplication removes redundant rows from a dataset — keeping only one representative row per group. It is one of the most common data quality operations in ETL pipelines and data warehouses.
+Deduplication removes redundant rows from a dataset — keeping only one representative row per group. It is one of the most common data quality operations in ETL pipelines and data warehouses. For the broader context of why deduplication matters, see [Data Integrity](data-integrity.md).
 
 ---
 
@@ -17,6 +17,9 @@ Deduplication removes redundant rows from a dataset — keeping only one represe
 | Exact duplicates | Every column is identical |
 | Key duplicates | Same business key, different attribute values |
 | Near duplicates | Similar but not identical — require fuzzy matching |
+
+!!! note
+    Near duplicates (fuzzy matching) are beyond standard SQL — they require string similarity functions like Levenshtein distance, which are available as extensions in PostgreSQL (`pg_trgm`) or as user-defined functions in other platforms. This page covers exact and key duplicates only.
 
 ---
 
@@ -115,23 +118,13 @@ WHERE rn = 1;
 
 ## Delete Duplicates from a Table
 
-Remove duplicate rows from a physical table, keeping only the desired row per key.
+Remove duplicate rows from a physical table using a primary key to identify which rows to keep.
 
 ```sql
--- PostgreSQL — delete duplicates using ctid (physical row ID)
-DELETE FROM customers
-WHERE ctid NOT IN (
-    SELECT MIN(ctid)
-    FROM customers
-    GROUP BY customer_id
-);
-```
-
-```sql
--- Standard ANSI approach — using a CTE with ROW_NUMBER
+-- ANSI SQL — delete duplicates using ROW_NUMBER and the primary key
 WITH ranked AS (
     SELECT
-        ctid,
+        customer_id,
         ROW_NUMBER() OVER (
             PARTITION BY customer_id
             ORDER BY updated_at DESC
@@ -139,10 +132,13 @@ WITH ranked AS (
     FROM customers
 )
 DELETE FROM customers
-WHERE ctid IN (
-    SELECT ctid FROM ranked WHERE rn > 1
+WHERE customer_id IN (
+    SELECT customer_id FROM ranked WHERE rn > 1
 );
 ```
+
+!!! note
+    Avoid using platform-specific row identifiers like `ctid` (PostgreSQL) or `ROWID` (Oracle) for deduplication — they are internal and not portable. Use the table's primary key or a surrogate key instead to identify rows to delete.
 
 ---
 
@@ -161,7 +157,8 @@ WHERE NOT EXISTS (
 );
 ```
 
-Or use `MERGE` for a more explicit upsert — see the **MERGE / UPSERT** page.
+!!! note
+    For a more explicit upsert pattern that handles both inserts and updates, see [MERGE / UPSERT](merge.md).
 
 ---
 
@@ -206,6 +203,7 @@ The further upstream you deduplicate, the less work downstream queries have to d
 
 - Always define a clear rule for which row to keep — latest, first, highest value
 - Use `ROW_NUMBER()` rather than `RANK()` for deduplication — it always returns exactly one row per group
+- Use the table's primary key to identify rows to delete — avoid internal row identifiers like `ctid`
 - Deduplicate as early in the pipeline as possible
 - Log how many duplicates were removed — unexpected counts indicate upstream data quality issues
 - Add a `UNIQUE` constraint on the business key after deduplication to prevent future duplicates at the database level

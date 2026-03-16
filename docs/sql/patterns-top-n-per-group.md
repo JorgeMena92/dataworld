@@ -8,6 +8,9 @@ tags: [sql, patterns, top-n, window-functions]
 
 The Top-N per group pattern retrieves the highest (or lowest) N rows within each partition of a dataset — the top 3 products per category, the 5 best-performing salespeople per region, the 10 most recent orders per customer.
 
+!!! note
+    This pattern builds on `ROW_NUMBER()` and window functions. If you arrived here from [Sorting & Limiting](sorting-limiting.md) or [Subqueries](subqueries.md), this page covers the full per-group treatment of what was introduced there.
+
 ---
 
 ## Basic Top-N — Entire Table
@@ -151,7 +154,10 @@ ORDER BY customer_id, rn;
 
 ## Top-1 per Group — Latest or Best
 
-A special case of Top-N — the single best row per group. Also see the **Latest Record per Group** page.
+A special case of Top-N — the single best row per group.
+
+!!! note
+    When Top-1 is used to get the most recent version of each entity (latest update, latest status), see [Latest Record per Group](patterns-latest-record.md) for the full treatment including tie handling and pipeline patterns.
 
 ```sql
 -- Best-selling product per category

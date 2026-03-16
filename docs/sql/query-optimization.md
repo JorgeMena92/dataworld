@@ -55,6 +55,9 @@ FROM pg_stats
 WHERE tablename = 'orders';
 ```
 
+!!! note
+    There is no ANSI SQL standard for managing statistics. `ANALYZE` is PostgreSQL syntax, also used in SQLite. SQL Server uses `UPDATE STATISTICS`. MySQL updates statistics automatically on `ANALYZE TABLE`. Always refer to your platform's documentation for statistics maintenance commands.
+
 !!! tip
     Most databases update statistics automatically on a schedule. After large bulk loads or deletes, run `ANALYZE` manually to ensure the optimizer has accurate information before running expensive queries.
 
@@ -62,16 +65,16 @@ WHERE tablename = 'orders';
 
 ## Filter Early
 
-The less data a query processes, the faster it runs. Push filters as close to the source as possible.
+The less data a query processes, the faster it runs. Push filters as close to the source as possible — most modern optimizers will push `WHERE` conditions down automatically, but writing the filter explicitly makes the intent clear and helps in cases where the optimizer cannot.
 
 ```sql
--- Bad — join all rows, then filter
+-- Both forms are typically equivalent — the optimizer pushes the filter down
 SELECT c.first_name, o.amount
 FROM orders o
 JOIN customers c ON o.customer_id = c.customer_id
 WHERE c.country = 'Peru';
 
--- Better — filter before joining using a CTE
+-- CTE form — same performance in most optimizers, clearer intent
 WITH peruvian_customers AS (
     SELECT customer_id, first_name
     FROM customers
@@ -81,6 +84,9 @@ SELECT c.first_name, o.amount
 FROM orders o
 JOIN peruvian_customers c ON o.customer_id = c.customer_id;
 ```
+
+!!! note
+    Some older databases or complex queries may not push filters through CTEs automatically. Use `EXPLAIN ANALYZE` to verify the filter is applied early in the plan — do not assume the CTE form is always faster.
 
 ---
 
@@ -209,7 +215,7 @@ FETCH FIRST 10 ROWS ONLY;
 
 ## Best Practices
 
-- Use `EXPLAIN` / `EXPLAIN ANALYZE` to understand what the database actually does — see the **Execution Plans** page
+- Use `EXPLAIN` / `EXPLAIN ANALYZE` to understand what the database actually does — see [Execution Plans](execution-plans.md)
 - Write queries that filter as early and as selectively as possible
 - Match the data types of compared values to the column type — mismatches cause implicit casts that bypass indexes
 - Update statistics after large data loads

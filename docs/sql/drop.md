@@ -71,14 +71,18 @@ DROP SCHEMA IF EXISTS staging CASCADE;
 ## DROP INDEX
 
 ```sql
+-- ANSI SQL
 DROP INDEX idx_orders_customer_id;
 
--- PostgreSQL
+-- With IF EXISTS (vendor extension — PostgreSQL, MySQL)
 DROP INDEX IF EXISTS idx_orders_customer_id;
 
--- SQL Server (requires table name)
+-- SQL Server — requires the table name
 DROP INDEX idx_orders_customer_id ON orders;
 ```
+
+!!! note
+    `IF EXISTS` on `DROP INDEX` is a vendor extension, not strict ANSI SQL. SQL Server requires the table name in the `ON` clause — the index name alone is not sufficient.
 
 ---
 
@@ -141,10 +145,25 @@ In databases without transactional DDL (MySQL, Oracle), a `DROP` is immediately 
 
 | Feature | ANSI SQL | SQL Server | PostgreSQL | MySQL |
 |---|---|---|---|---|
-| `IF EXISTS` | ✅ | ✅ | ✅ | ✅ |
+| `IF EXISTS` | Vendor extension | ✅ | ✅ | ✅ |
 | `CASCADE` | ✅ | ❌ (manual) | ✅ | ❌ (manual) |
 | Transactional DDL | Depends | ✅ | ✅ | ❌ |
 | Drop index syntax | Varies | `DROP INDEX name ON table` | `DROP INDEX name` | `DROP INDEX name ON table` |
+
+---
+
+## Rename Before You Drop
+
+Instead of dropping a table immediately, rename it first. This gives a recovery window — if something breaks after the rename, you can restore it instantly without needing a backup restore.
+
+```sql
+-- Step 1: rename instead of dropping immediately
+ALTER TABLE customers RENAME TO customers_deprecated_20240101;
+
+-- Step 2: verify nothing is broken over the next few days
+-- Step 3: drop once confident
+DROP TABLE customers_deprecated_20240101;
+```
 
 ---
 
@@ -156,10 +175,3 @@ In databases without transactional DDL (MySQL, Oracle), a `DROP` is immediately 
 - In databases with transactional DDL, wrap destructive drops in a transaction
 - Back up data before dropping any table that contains records
 - Prefer renaming a table over dropping it immediately — gives a recovery window
-
-```sql
--- Safer than immediate DROP — rename first, verify, then drop later
-ALTER TABLE customers RENAME TO customers_deprecated_20240101;
--- After confirming no issues:
-DROP TABLE customers_deprecated_20240101;
-```

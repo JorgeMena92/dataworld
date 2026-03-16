@@ -8,6 +8,9 @@ tags: [sql, patterns, scd, data-warehouse]
 
 A Slowly Changing Dimension (SCD) is a dimension table in a data warehouse where attribute values change over time — but slowly and irregularly. Customer segments change, product categories are renamed, employees move between departments. SCDs define how to handle these changes: overwrite, preserve history, or track the transition.
 
+!!! note
+    SCD Type 1 is implemented with `MERGE` — see [MERGE / UPSERT](merge.md) for the full syntax. The latest record pattern (reading the current state of a Type 2 dimension) is covered in [Latest Record per Group](patterns-latest-record.md).
+
 ---
 
 ## Why SCDs Matter
@@ -69,16 +72,17 @@ customer_key  customer_id  segment    valid_from   valid_to     is_current
 ```
 
 ```sql
--- Step 1: expire rows that have changed
+-- Step 1: expire rows that have changed — JOIN approach for performance
 UPDATE dim_customer
 SET
     valid_to   = CURRENT_DATE,
     is_current = FALSE
-WHERE customer_id IN (SELECT customer_id FROM staging_customer)
-  AND is_current = TRUE
+FROM staging_customer s
+WHERE dim_customer.customer_id = s.customer_id
+  AND dim_customer.is_current  = TRUE
   AND (
-    segment <> (SELECT segment FROM staging_customer WHERE customer_id = dim_customer.customer_id) OR
-    country <> (SELECT country FROM staging_customer WHERE customer_id = dim_customer.customer_id)
+      dim_customer.segment <> s.segment OR
+      dim_customer.country <> s.country
   );
 
 -- Step 2: insert new rows for changed and new records
@@ -98,11 +102,17 @@ FROM staging_customer s
 WHERE NOT EXISTS (
     SELECT 1 FROM dim_customer d
     WHERE d.customer_id = s.customer_id
-      AND d.is_current = TRUE
-      AND d.segment = s.segment
-      AND d.country = s.country
+      AND d.is_current  = TRUE
+      AND d.segment     = s.segment
+      AND d.country     = s.country
 );
 ```
+
+!!! note
+    `DATE '9999-12-31'` is ANSI SQL syntax for a date literal. SQL Server accepts `'9999-12-31'` without the `DATE` keyword. Both forms work in PostgreSQL. Use whichever form your platform requires — the sentinel value itself (`9999-12-31`) is the convention that matters.
+
+!!! tip
+    The UPDATE in Step 1 uses a JOIN-based approach (`FROM staging_customer`) rather than correlated subqueries — this is significantly faster on large dimension tables. See [UPDATE](update.md) for the portability note on this syntax.
 
 ### Querying SCD Type 2
 
@@ -145,7 +155,7 @@ customer_id  segment_current  segment_previous  segment_changed_at
 ```sql
 -- Schema
 ALTER TABLE dim_customer
-ADD COLUMN segment_previous  VARCHAR(50),
+ADD COLUMN segment_previous   VARCHAR(50),
 ADD COLUMN segment_changed_at TIMESTAMP;
 
 -- Update when segment changes
@@ -180,13 +190,13 @@ WHERE dim_customer.customer_id = source.customer_id
 ```sql
 CREATE TABLE dim_customer (
     customer_key  INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,  -- surrogate key
-    customer_id   INT        NOT NULL,   -- business / natural key
+    customer_id   INT          NOT NULL,   -- business / natural key
     first_name    VARCHAR(100),
     segment       VARCHAR(50),
     country       CHAR(2),
-    valid_from    DATE       NOT NULL DEFAULT CURRENT_DATE,
-    valid_to      DATE       NOT NULL DEFAULT DATE '9999-12-31',
-    is_current    BOOLEAN    NOT NULL DEFAULT TRUE
+    valid_from    DATE         NOT NULL DEFAULT CURRENT_DATE,
+    valid_to      DATE         NOT NULL DEFAULT DATE '9999-12-31',
+    is_current    BOOLEAN      NOT NULL DEFAULT TRUE
 );
 
 -- Index for point-in-time lookups
@@ -203,4 +213,5 @@ ON dim_customer (customer_id, is_current);
 - Use `is_current = TRUE` for the current record and a `valid_to = '9999-12-31'` sentinel date
 - Index `(customer_id, is_current)` for fast current-record lookups
 - Index `(customer_id, valid_from, valid_to)` for point-in-time joins
+- Use a JOIN-based UPDATE for expiring rows — avoid correlated subqueries on large dimension tables
 - Document which attributes are tracked as Type 2 — not every column needs history

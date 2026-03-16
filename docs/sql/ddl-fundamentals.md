@@ -19,6 +19,9 @@ Data Definition Language (DDL) defines and manages the **structure** of a databa
 | `DROP` | Permanently delete an object |
 | `TRUNCATE` | Remove all rows from a table, keeping its structure |
 
+!!! note
+    `TRUNCATE` is classified as DDL because it operates on the table structure rather than individual rows. In practice it is often used as part of data pipelines alongside DML commands. See [TRUNCATE](truncate.md) for the full treatment including cross-platform rollback behavior.
+
 ---
 
 ## How DDL Fits in the SQL Lifecycle
@@ -83,15 +86,14 @@ Database
 
 All of these objects are created, modified, and dropped using DDL commands.
 
+!!! note
+    Views, Materialized Views, Functions, Stored Procedures, and Triggers are DDL objects but are covered in the dedicated [Database Objects](views.md) section of this site rather than in the DDL command pages — they have enough depth to warrant their own treatment.
+
 ---
 
-## Safety Rules for DDL
+## Safe Script Pattern
 
-- Always use `IF EXISTS` / `IF NOT EXISTS` in scripts to avoid errors on re-runs
-- Never run `DROP` or destructive `ALTER` directly in production without a backup
-- Version control all DDL scripts — treat schema changes like application code
-- Test migrations in a lower environment before applying to production
-- For large tables, plan `ALTER TABLE` operations carefully — they can lock the table
+Always use `IF EXISTS` / `IF NOT EXISTS` guards in DDL scripts — they make scripts safe to re-run without errors.
 
 ```sql
 -- Safe script pattern
@@ -102,3 +104,14 @@ CREATE TABLE IF NOT EXISTS customers (
 
 DROP TABLE IF EXISTS temp_staging;
 ```
+
+---
+
+## Best Practices
+
+- Always use `IF EXISTS` / `IF NOT EXISTS` in scripts to avoid errors on re-runs
+- Never run `DROP` or destructive `ALTER` directly in production without a backup
+- Version control all DDL scripts — treat schema changes like application code
+- Test migrations in a lower environment before applying to production
+- For large tables, plan `ALTER TABLE` operations carefully — they can lock the table
+- Treat DDL as non-transactional when writing scripts that must run on multiple platforms

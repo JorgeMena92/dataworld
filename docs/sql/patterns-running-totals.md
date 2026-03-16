@@ -70,16 +70,14 @@ ORDER BY order_date;
 Calculate over a fixed number of preceding rows — useful for smoothing noisy time series.
 
 ```sql
--- 7-day rolling sum
+-- 7-day rolling sum and average
 SELECT
     order_date,
     amount,
     SUM(amount) OVER (
         ORDER BY order_date
         ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
-    ) AS rolling_7day_sum
-
--- 7-day rolling average
+    ) AS rolling_7day_sum,
     AVG(amount) OVER (
         ORDER BY order_date
         ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
@@ -101,7 +99,7 @@ SELECT
     amount,
     SUM(amount) OVER (
         ORDER BY order_date
-        RANGE BETWEEN INTERVAL '6 days' PRECEDING AND CURRENT ROW
+        RANGE BETWEEN INTERVAL '6' DAY PRECEDING AND CURRENT ROW
     ) AS rolling_7day_sum
 FROM daily_sales
 ORDER BY order_date;
@@ -109,6 +107,9 @@ ORDER BY order_date;
 
 !!! tip
     Use `ROWS` when you want a fixed number of rows (e.g. last 7 rows). Use `RANGE` when you want a fixed time window (e.g. last 7 days) — especially when there are missing dates.
+
+!!! note
+    `RANGE BETWEEN INTERVAL '6' DAY PRECEDING` is the ANSI form. PostgreSQL also accepts `INTERVAL '6 days'`. SQL Server supports time-based `RANGE` frames only with `UNBOUNDED` — for date-based rolling windows in SQL Server, use `ROWS BETWEEN 6 PRECEDING AND CURRENT ROW` with a pre-aggregated daily table to approximate the behavior.
 
 ---
 
@@ -138,23 +139,27 @@ Compare each period to the same period in the previous cycle using `LAG`.
 ```sql
 WITH monthly AS (
     SELECT
-        DATE_TRUNC('month', order_date) AS month,
+        EXTRACT(YEAR  FROM order_date) AS order_year,
+        EXTRACT(MONTH FROM order_date) AS order_month,
         SUM(amount) AS total
     FROM orders
-    GROUP BY 1
+    GROUP BY
+        EXTRACT(YEAR  FROM order_date),
+        EXTRACT(MONTH FROM order_date)
 )
 SELECT
-    month,
+    order_year,
+    order_month,
     total,
-    LAG(total) OVER (ORDER BY month)         AS prev_month,
-    total - LAG(total) OVER (ORDER BY month) AS change,
+    LAG(total) OVER (ORDER BY order_year, order_month)         AS prev_month,
+    total - LAG(total) OVER (ORDER BY order_year, order_month) AS change,
     ROUND(
-        100.0 * (total - LAG(total) OVER (ORDER BY month))
-        / NULLIF(LAG(total) OVER (ORDER BY month), 0),
+        100.0 * (total - LAG(total) OVER (ORDER BY order_year, order_month))
+        / NULLIF(LAG(total) OVER (ORDER BY order_year, order_month), 0),
         2
     ) AS pct_change
 FROM monthly
-ORDER BY month;
+ORDER BY order_year, order_month;
 ```
 
 ---
@@ -164,22 +169,26 @@ ORDER BY month;
 ```sql
 WITH monthly AS (
     SELECT
-        DATE_TRUNC('month', order_date) AS month,
+        EXTRACT(YEAR  FROM order_date) AS order_year,
+        EXTRACT(MONTH FROM order_date) AS order_month,
         SUM(amount) AS total
     FROM orders
-    GROUP BY 1
+    GROUP BY
+        EXTRACT(YEAR  FROM order_date),
+        EXTRACT(MONTH FROM order_date)
 )
 SELECT
-    month,
+    order_year,
+    order_month,
     total,
-    LAG(total, 12) OVER (ORDER BY month) AS same_month_last_year,
+    LAG(total, 12) OVER (ORDER BY order_year, order_month) AS same_month_last_year,
     ROUND(
-        100.0 * (total - LAG(total, 12) OVER (ORDER BY month))
-        / NULLIF(LAG(total, 12) OVER (ORDER BY month), 0),
+        100.0 * (total - LAG(total, 12) OVER (ORDER BY order_year, order_month))
+        / NULLIF(LAG(total, 12) OVER (ORDER BY order_year, order_month), 0),
         2
     ) AS yoy_pct_change
 FROM monthly
-ORDER BY month;
+ORDER BY order_year, order_month;
 ```
 
 ---
@@ -217,3 +226,4 @@ ORDER BY sale_date;
 - Use `NULLIF` when calculating percentages to avoid division by zero
 - For period-over-period, use `LAG(value, n)` where `n` is the number of periods to look back
 - Filter and aggregate in a CTE first, then apply window functions — cleaner and more efficient
+- Use `EXTRACT(YEAR ...)` / `EXTRACT(MONTH ...)` for date grouping instead of `DATE_TRUNC` — more portable across platforms

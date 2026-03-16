@@ -8,6 +8,9 @@ tags: [sql, patterns, idempotent, pipelines]
 
 An idempotent operation produces the same result regardless of how many times it is executed. In data pipelines, idempotency means a pipeline can be safely re-run after a failure — without creating duplicate data, corrupting existing records, or requiring manual cleanup.
 
+!!! note
+    This page covers idempotent SQL patterns. Related pages: [MERGE / UPSERT](merge.md) for the upsert pattern, [Incremental Data Loading](incremental-loading.md) for watermark-based pipelines, and [Transactions](transactions.md) for wrapping loads atomically.
+
 ---
 
 ## Why Idempotency Matters
@@ -124,14 +127,17 @@ Re-running inserts only the rows that are genuinely new.
 
 A cleaner, atomic alternative to `INSERT WHERE NOT EXISTS` in PostgreSQL.
 
+!!! note
+    `ON CONFLICT` is PostgreSQL syntax. SQL Server uses `MERGE`, MySQL uses `INSERT ... ON DUPLICATE KEY UPDATE`. For the ANSI-portable upsert pattern, see [MERGE / UPSERT](merge.md).
+
 ```sql
 -- PostgreSQL
 INSERT INTO customers (customer_id, email, segment)
 VALUES (42, 'jorge@example.com', 'Gold')
 ON CONFLICT (customer_id)
 DO UPDATE SET
-    email     = EXCLUDED.email,
-    segment   = EXCLUDED.segment,
+    email      = EXCLUDED.email,
+    segment    = EXCLUDED.segment,
     updated_at = CURRENT_TIMESTAMP;
 ```
 
@@ -157,6 +163,9 @@ CREATE TABLE IF NOT EXISTS customers (
 
 DROP TABLE IF EXISTS temp_staging;
 ```
+
+!!! note
+    `IF NOT EXISTS` and `IF EXISTS` are vendor extensions — not strict ANSI SQL. They are supported in PostgreSQL, MySQL, and SQL Server (2016+). For older SQL Server versions, use an `IF NOT EXISTS (SELECT ...)` check before the DDL statement. See [CREATE](create.md) and [DROP](drop.md) for platform details.
 
 ---
 

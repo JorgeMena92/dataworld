@@ -8,7 +8,8 @@ tags: [sql, database-objects, views]
 
 A view is a named query stored in the database that behaves like a virtual table. It does not store data itself — it executes the underlying query every time it is referenced. Views simplify complex queries, enforce consistent data access, and add a layer of abstraction between the data and its consumers.
 
-> Views are created with DDL (`CREATE VIEW`) but grouped here under Database Objects because they are reusable schema-level objects with their own lifecycle, independent of table structure management.
+!!! note
+    Views are created with DDL (`CREATE VIEW`) but grouped here under Database Objects because they are reusable schema-level objects with their own lifecycle, independent of table structure management.
 
 ---
 
@@ -73,7 +74,10 @@ WHERE is_active = TRUE;
 ## DROP VIEW
 
 ```sql
+-- ANSI SQL
 DROP VIEW active_customers;
+
+-- Vendor extension — supported in PostgreSQL, MySQL, SQL Server (2016+)
 DROP VIEW IF EXISTS active_customers;
 ```
 
@@ -136,6 +140,33 @@ WHERE customer_id = 42;
 !!! warning
     Complex views with joins, aggregations, or subqueries are generally not updatable. Treat views primarily as read-only objects for safety.
 
+### WITH CHECK OPTION
+
+`WITH CHECK OPTION` ensures that rows inserted or updated through a view still satisfy the view's `WHERE` clause — preventing data from being written that would immediately disappear from the view.
+
+```sql
+-- Without CHECK OPTION — allows inserting inactive customers through the view
+CREATE VIEW active_customers AS
+SELECT customer_id, first_name, email
+FROM customers
+WHERE is_active = TRUE;
+
+-- With CHECK OPTION — rejects any INSERT or UPDATE that violates the WHERE clause
+CREATE VIEW active_customers AS
+SELECT customer_id, first_name, email
+FROM customers
+WHERE is_active = TRUE
+WITH CHECK OPTION;
+
+-- This INSERT will fail — is_active = FALSE violates the view condition
+INSERT INTO active_customers (customer_id, first_name, email)
+VALUES (99, 'Test', 'test@example.com');
+-- The underlying customers table would need is_active = TRUE for this to succeed
+```
+
+!!! tip
+    Use `WITH CHECK OPTION` on updatable views that filter by condition — it prevents silent data integrity issues where inserted rows are immediately invisible through the view.
+
 ---
 
 ## Views vs CTEs
@@ -160,6 +191,9 @@ Both provide named, reusable query logic — but they serve different scopes.
 | Replace view | — | `ALTER VIEW` | `CREATE OR REPLACE` | `CREATE OR REPLACE` |
 | Updatable views | ✅ | ✅ | ✅ | ✅ |
 | Schema-bound views | — | `WITH SCHEMABINDING` | — | — |
+
+!!! note
+    SQL Server's `WITH SCHEMABINDING` binds the view to the schema of its underlying tables — preventing `ALTER TABLE` or `DROP TABLE` operations that would break the view. It is required for indexed views in SQL Server.
 
 ---
 

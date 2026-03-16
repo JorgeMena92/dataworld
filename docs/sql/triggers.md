@@ -30,7 +30,7 @@ Original operation continues (or is cancelled)
 |---|---|---|
 | `BEFORE` | Before the row is modified | Validate or modify data before it is saved |
 | `AFTER` | After the row is modified | Audit logging, cascading updates |
-| `INSTEAD OF` | Replaces the operation | Make views updatable |
+| `INSTEAD OF` | Replaces the operation | Make views updatable — see [Views](views.md) |
 
 ---
 
@@ -78,6 +78,9 @@ ON customers
 FOR EACH ROW
 EXECUTE FUNCTION log_customer_changes();
 ```
+
+!!! note
+    PostgreSQL uses a two-step approach — define the logic in a separate function that returns `TRIGGER`, then attach it to the table with `CREATE TRIGGER`. SQL Server, MySQL, and Oracle define the trigger body inline in a single `CREATE TRIGGER` statement. See the [Vendor Notes](#vendor-notes) section for the SQL Server equivalent.
 
 ### Validation Trigger (BEFORE INSERT/UPDATE)
 
@@ -154,8 +157,10 @@ ALTER TABLE customers DISABLE TRIGGER trg_customers_audit;
 -- Re-enable
 ALTER TABLE customers ENABLE TRIGGER trg_customers_audit;
 
--- Drop
+-- ANSI SQL
 DROP TRIGGER trg_customers_audit ON customers;
+
+-- Vendor extension — supported in PostgreSQL, MySQL, SQL Server (2016+)
 DROP TRIGGER IF EXISTS trg_customers_audit ON customers;
 ```
 
@@ -181,7 +186,7 @@ AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN
     INSERT INTO customers_audit (customer_id, operation, changed_at)
-    SELECT customer_id, 'CHANGE', GETDATE()
+    SELECT customer_id, 'CHANGE', CURRENT_TIMESTAMP  -- CURRENT_TIMESTAMP is ANSI; SQL Server also accepts GETDATE()
     FROM inserted;  -- SQL Server uses 'inserted' and 'deleted' instead of NEW/OLD
 END;
 ```

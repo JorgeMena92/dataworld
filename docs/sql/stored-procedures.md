@@ -63,6 +63,9 @@ $$;
 CALL update_customer_status(42, 'inactive');
 ```
 
+!!! note
+    `RAISE EXCEPTION` is PL/pgSQL (PostgreSQL) syntax for throwing errors. The equivalent in SQL Server is `THROW` or `RAISERROR`. MySQL uses `SIGNAL SQLSTATE`. There is no ANSI SQL standard for raising exceptions in procedural code — always use the syntax specific to your platform.
+
 ---
 
 ## Procedures with Transaction Control
@@ -132,7 +135,8 @@ BEGIN
         COUNT(*)
     FROM orders o
     JOIN customers c ON o.customer_id = c.customer_id
-    WHERE DATEADD(MONTH, DATEDIFF(MONTH, 0, o.order_date), 0) = @load_month
+    WHERE YEAR(o.order_date)  = YEAR(@load_month)
+      AND MONTH(o.order_date) = MONTH(@load_month)
       AND o.status = 'completed'
     GROUP BY c.country;
 END;
@@ -173,10 +177,13 @@ CALL get_customer_total(42, NULL);
 ## Dropping Procedures
 
 ```sql
+-- ANSI SQL
 DROP PROCEDURE update_customer_status;
+
+-- Vendor extension — supported in PostgreSQL, MySQL, SQL Server (2016+)
 DROP PROCEDURE IF EXISTS update_customer_status;
 
--- With parameter types (when overloaded)
+-- With parameter types when overloaded (PostgreSQL)
 DROP PROCEDURE update_customer_status(INT, VARCHAR);
 ```
 

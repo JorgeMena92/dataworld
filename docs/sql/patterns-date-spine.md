@@ -8,6 +8,9 @@ tags: [sql, patterns, date-spine, time-series]
 
 A date spine is a complete, uninterrupted sequence of dates used as a backbone for time series analysis. When you join event data to a date spine, every date appears in the result — even dates with no events — making gaps visible rather than hidden.
 
+!!! note
+    This page was introduced as a use case for recursive CTEs. See [CTEs](ctes.md) for the recursive CTE syntax that powers the portable date spine approach.
+
 ---
 
 ## The Problem
@@ -35,34 +38,44 @@ With a date spine, Jan 3 appears with revenue = 0.
 
 ## Generating a Date Spine
 
-### PostgreSQL — generate_series
+### Recursive CTE — ANSI SQL (Portable)
 
-```sql
--- Generate every date in a range
-SELECT
-    generate_series(
-        '2024-01-01'::DATE,
-        '2024-12-31'::DATE,
-        '1 day'::INTERVAL
-    )::DATE AS dt;
-```
-
-### Recursive CTE (ANSI SQL — portable)
+The portable approach works across all platforms that support recursive CTEs.
 
 ```sql
 WITH RECURSIVE date_spine AS (
     -- Anchor: start date
-    SELECT DATE '2024-01-01' AS dt
+    SELECT CAST('2024-01-01' AS DATE) AS dt
 
     UNION ALL
 
     -- Recursive: add one day until end date
-    SELECT dt + INTERVAL '1 day'
+    SELECT dt + INTERVAL '1' DAY
     FROM date_spine
-    WHERE dt < DATE '2024-12-31'
+    WHERE dt < CAST('2024-12-31' AS DATE)
 )
 SELECT dt FROM date_spine;
 ```
+
+!!! note
+    SQL Server uses plain `WITH` — the `RECURSIVE` keyword is not supported and will cause a syntax error in T-SQL. See [CTEs](ctes.md) for the full platform note.
+
+### PostgreSQL — generate_series
+
+PostgreSQL offers a more concise built-in function:
+
+```sql
+-- PostgreSQL only
+SELECT
+    CAST(generate_series(
+        CAST('2024-01-01' AS DATE),
+        CAST('2024-12-31' AS DATE),
+        INTERVAL '1 day'
+    ) AS DATE) AS dt;
+```
+
+!!! note
+    `generate_series` is PostgreSQL-specific. Use the recursive CTE approach for cross-platform queries.
 
 ### From an Existing Date Dimension Table
 
@@ -70,34 +83,36 @@ In a data warehouse, a pre-built date dimension table is the most common approac
 
 ```sql
 -- Use the date dimension as your spine
-SELECT d.date_key AS dt
-FROM dim_date d
-WHERE d.date_key BETWEEN '2024-01-01' AND '2024-12-31';
+SELECT date_key AS dt
+FROM dim_date
+WHERE date_key BETWEEN CAST('2024-01-01' AS DATE) AND CAST('2024-12-31' AS DATE);
 ```
 
 ---
 
 ## Joining to Fill Gaps
 
+Using the ANSI recursive CTE approach:
+
 ```sql
-WITH date_spine AS (
-    SELECT generate_series(
-        '2024-01-01'::DATE,
-        '2024-12-31'::DATE,
-        '1 day'::INTERVAL
-    )::DATE AS dt
+WITH RECURSIVE date_spine AS (
+    SELECT CAST('2024-01-01' AS DATE) AS dt
+    UNION ALL
+    SELECT dt + INTERVAL '1' DAY
+    FROM date_spine
+    WHERE dt < CAST('2024-12-31' AS DATE)
 ),
 daily_sales AS (
     SELECT
         order_date,
         SUM(amount) AS revenue
     FROM orders
-    WHERE order_date BETWEEN '2024-01-01' AND '2024-12-31'
+    WHERE order_date BETWEEN CAST('2024-01-01' AS DATE) AND CAST('2024-12-31' AS DATE)
     GROUP BY order_date
 )
 SELECT
-    s.dt                          AS order_date,
-    COALESCE(d.revenue, 0)        AS revenue
+    s.dt                       AS order_date,
+    COALESCE(d.revenue, 0)     AS revenue
 FROM date_spine s
 LEFT JOIN daily_sales d ON s.dt = d.order_date
 ORDER BY s.dt;
@@ -112,12 +127,12 @@ Now every date in the range appears, with 0 for dates with no sales.
 When you need a complete date range per user, product, or region.
 
 ```sql
-WITH date_spine AS (
-    SELECT generate_series(
-        '2024-01-01'::DATE,
-        '2024-03-31'::DATE,
-        '1 day'::INTERVAL
-    )::DATE AS dt
+WITH RECURSIVE date_spine AS (
+    SELECT CAST('2024-01-01' AS DATE) AS dt
+    UNION ALL
+    SELECT dt + INTERVAL '1' DAY
+    FROM date_spine
+    WHERE dt < CAST('2024-03-31' AS DATE)
 ),
 users AS (
     SELECT DISTINCT user_id FROM user_activity
@@ -151,11 +166,12 @@ ORDER BY ud.user_id, ud.dt;
 Without a date spine, running totals skip days with no activity. With a spine, the running total continues correctly.
 
 ```sql
-WITH date_spine AS (
-    SELECT generate_series(
-        MIN(order_date), MAX(order_date), '1 day'::INTERVAL
-    )::DATE AS dt
-    FROM orders
+WITH RECURSIVE date_spine AS (
+    SELECT MIN(order_date) AS dt FROM orders
+    UNION ALL
+    SELECT dt + INTERVAL '1' DAY
+    FROM date_spine
+    WHERE dt < (SELECT MAX(order_date) FROM orders)
 ),
 daily AS (
     SELECT order_date, SUM(amount) AS revenue
@@ -184,28 +200,29 @@ ORDER BY dt;
 For a data warehouse, generate a permanent date dimension once and reuse it everywhere.
 
 ```sql
+-- PostgreSQL example — using generate_series and EXTRACT
 CREATE TABLE dim_date AS
 SELECT
-    dt::DATE                                    AS date_key,
-    EXTRACT(YEAR  FROM dt)::INT                 AS year,
-    EXTRACT(MONTH FROM dt)::INT                 AS month,
-    EXTRACT(DAY   FROM dt)::INT                 AS day,
-    EXTRACT(DOW   FROM dt)::INT                 AS day_of_week,  -- 0=Sun, 6=Sat
-    EXTRACT(WEEK  FROM dt)::INT                 AS week_of_year,
-    EXTRACT(QUARTER FROM dt)::INT               AS quarter,
-    TO_CHAR(dt, 'Month')                        AS month_name,
-    TO_CHAR(dt, 'Day')                          AS day_name,
-    CASE WHEN EXTRACT(DOW FROM dt) IN (0, 6)
-         THEN FALSE ELSE TRUE END               AS is_weekday
+    CAST(dt AS DATE)                AS date_key,
+    EXTRACT(YEAR    FROM dt)        AS year,
+    EXTRACT(MONTH   FROM dt)        AS month,
+    EXTRACT(DAY     FROM dt)        AS day,
+    EXTRACT(QUARTER FROM dt)        AS quarter
 FROM generate_series(
-    '2020-01-01'::DATE,
-    '2030-12-31'::DATE,
-    '1 day'::INTERVAL
+    CAST('2020-01-01' AS DATE),
+    CAST('2030-12-31' AS DATE),
+    INTERVAL '1 day'
 ) AS dt;
 
 -- Index for fast lookups
 CREATE UNIQUE INDEX idx_dim_date_key ON dim_date (date_key);
 ```
+
+!!! note
+    `EXTRACT(DOW ...)` (day of week) and `EXTRACT(WEEK ...)` (week of year) are not ANSI SQL — they are PostgreSQL extensions. ANSI `EXTRACT` supports `YEAR`, `MONTH`, `DAY`, `HOUR`, `MINUTE`, and `SECOND` only. For day of week and week number, use platform-specific functions: `DATEPART(weekday, dt)` in SQL Server, `DAYOFWEEK(dt)` in MySQL.
+
+!!! note
+    `TO_CHAR(dt, 'Month')` for month and day names is PostgreSQL-specific. SQL Server uses `DATENAME(month, dt)`, MySQL uses `MONTHNAME(dt)`. There is no ANSI SQL standard for formatting date parts as strings.
 
 ---
 
@@ -214,24 +231,30 @@ CREATE UNIQUE INDEX idx_dim_date_key ON dim_date (date_key);
 | Database | Date generation |
 |---|---|
 | PostgreSQL | `generate_series(start, end, interval)` |
-| SQL Server | Recursive CTE or `sys.all_objects` cross join |
+| SQL Server | Recursive CTE (no `RECURSIVE` keyword) |
 | MySQL | Recursive CTE (8.0+) |
 | Snowflake | `GENERATOR(ROWCOUNT => n)` with `DATEADD` |
 | BigQuery | `GENERATE_DATE_ARRAY(start, end, INTERVAL 1 DAY)` |
 
 ```sql
--- SQL Server — using a numbers table cross join
-WITH numbers AS (
-    SELECT TOP 365 ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) - 1 AS n
-    FROM sys.all_objects
+-- SQL Server — recursive CTE (no RECURSIVE keyword)
+WITH date_spine AS (
+    SELECT CAST('2024-01-01' AS DATE) AS dt
+    UNION ALL
+    SELECT DATEADD(DAY, 1, dt)
+    FROM date_spine
+    WHERE dt < CAST('2024-12-31' AS DATE)
 )
-SELECT DATEADD(DAY, n, '2024-01-01') AS dt
-FROM numbers;
+SELECT dt FROM date_spine
+OPTION (MAXRECURSION 366);
 
 -- BigQuery
 SELECT dt
 FROM UNNEST(GENERATE_DATE_ARRAY('2024-01-01', '2024-12-31', INTERVAL 1 DAY)) AS dt;
 ```
+
+!!! note
+    SQL Server requires `OPTION (MAXRECURSION n)` for recursive CTEs that exceed 100 iterations — the default limit. Set it to the number of days in your range, or use `OPTION (MAXRECURSION 0)` to remove the limit entirely.
 
 ---
 
@@ -242,3 +265,4 @@ FROM UNNEST(GENERATE_DATE_ARRAY('2024-01-01', '2024-12-31', INTERVAL 1 DAY)) AS 
 - Always `LEFT JOIN` your data to the date spine — not the other way around
 - Use `COALESCE(value, 0)` to replace nulls from the left join with meaningful defaults
 - Set the date spine range to match your reporting window — not the full history of the source table
+- Use `CAST(... AS DATE)` instead of `::DATE` for portable date literal casting

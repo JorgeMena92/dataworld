@@ -42,7 +42,7 @@ CREATE OR REPLACE FUNCTION full_name(first VARCHAR, last VARCHAR)
 RETURNS VARCHAR
 LANGUAGE SQL
 AS $$
-    SELECT TRIM(first) || ' ' || TRIM(last);
+    SELECT CONCAT(TRIM(first), ' ', TRIM(last));
 $$;
 
 -- Usage
@@ -50,17 +50,25 @@ SELECT full_name(first_name, last_name) AS name FROM customers;
 ```
 
 ```sql
--- Calculate age from a birth date
+-- Calculate age from a birth date — ANSI portable using EXTRACT
 CREATE OR REPLACE FUNCTION calculate_age(birth_date DATE)
 RETURNS INT
 LANGUAGE SQL
 AS $$
-    SELECT EXTRACT(YEAR FROM AGE(CURRENT_DATE, birth_date))::INT;
+    SELECT EXTRACT(YEAR FROM CURRENT_DATE) - EXTRACT(YEAR FROM birth_date) -
+        CASE
+            WHEN (EXTRACT(MONTH FROM CURRENT_DATE) * 100 + EXTRACT(DAY FROM CURRENT_DATE)) <
+                 (EXTRACT(MONTH FROM birth_date)   * 100 + EXTRACT(DAY FROM birth_date))
+            THEN 1 ELSE 0
+        END;
 $$;
 
 -- Usage
 SELECT customer_id, calculate_age(birth_date) AS age FROM customers;
 ```
+
+!!! note
+    PostgreSQL's `AGE()` function computes the interval between two dates directly, but it is not ANSI SQL. The `EXTRACT`-based approach above is portable across platforms.
 
 ---
 
@@ -127,7 +135,7 @@ RETURNS VARCHAR
 LANGUAGE SQL
 IMMUTABLE
 AS $$
-    SELECT '$' || TO_CHAR(amount, 'FM999,999,990.00');
+    SELECT '$' || TO_CHAR(amount, 'FM999,999,990.00');  -- TO_CHAR is PostgreSQL-specific
 $$;
 
 -- STABLE — returns the same result within a single query (may read DB)
@@ -139,6 +147,9 @@ AS $$
     SELECT rate FROM tax_rates WHERE country_code = country;
 $$;
 ```
+
+!!! note
+    `VOLATILE`, `STABLE`, and `IMMUTABLE` are PostgreSQL-specific volatility markers. SQL Server and MySQL do not have equivalent keywords — the query optimizer on those platforms determines caching behavior automatically without explicit hints.
 
 | Volatility | Behavior | Optimization |
 |---|---|---|
@@ -167,6 +178,22 @@ Function syntax varies significantly — functions are not fully standardized ac
 | Table-valued | `RETURNS TABLE (...)` | `RETURNS TABLE` / inline TVF | ❌ |
 | Language | `SQL`, `plpgsql`, `python` | `T-SQL` | `SQL` |
 | Replace existing | `CREATE OR REPLACE` | `ALTER FUNCTION` | `CREATE OR REPLACE` |
+
+```sql
+-- SQL Server scalar function equivalent
+CREATE FUNCTION dbo.full_name(@first VARCHAR(100), @last VARCHAR(100))
+RETURNS VARCHAR(200)
+AS
+BEGIN
+    RETURN CONCAT(TRIM(@first), ' ', TRIM(@last));
+END;
+
+-- Usage
+SELECT dbo.full_name(first_name, last_name) AS name FROM customers;
+```
+
+!!! note
+    SQL Server requires the schema prefix (`dbo.`) when calling user-defined functions. Parameters use `@` as a prefix. Unlike PostgreSQL, SQL Server functions use `BEGIN...END` blocks and explicit `RETURN` statements rather than `$$` delimiters.
 
 ---
 

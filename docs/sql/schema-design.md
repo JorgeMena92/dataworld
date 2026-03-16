@@ -180,7 +180,7 @@ CREATE TABLE employees (
 
 CREATE TABLE employee_profiles (
     employee_id INT PRIMARY KEY REFERENCES employees(employee_id),
-    bio         TEXT,
+    bio         VARCHAR(2000),
     photo_url   VARCHAR(500)
 );
 ```
@@ -199,11 +199,13 @@ CREATE TABLE employee_profiles (
 
 ### Star Schema (OLAP)
 
+In a star schema, a central fact table references multiple dimension tables. The fact table holds measurable events (sales, transactions), and the dimensions hold descriptive context (customer, product, date).
+
 ```sql
 -- Fact table — transactions
 CREATE TABLE fact_sales (
-    sale_id     INT PRIMARY KEY,
-    date_key    INT REFERENCES dim_date(date_key),
+    sale_id      INT PRIMARY KEY,
+    date_key     INT REFERENCES dim_date(date_key),
     customer_key INT REFERENCES dim_customer(customer_key),
     product_key  INT REFERENCES dim_product(product_key),
     amount       DECIMAL(10, 2),
@@ -218,7 +220,21 @@ CREATE TABLE dim_customer (
     country      VARCHAR(100),
     segment      VARCHAR(50)
 );
+
+-- Date dimension — one row per calendar day
+CREATE TABLE dim_date (
+    date_key    INT PRIMARY KEY,   -- e.g. 20240115
+    full_date   DATE NOT NULL,
+    year        INT,
+    month       INT,
+    quarter     INT,
+    day_of_week VARCHAR(10),
+    is_weekend  BOOLEAN
+);
 ```
+
+!!! note
+    A **snowflake schema** is a variation of the star schema where dimension tables are further normalized — for example, splitting `country` out of `dim_customer` into its own `dim_country` table. This reduces redundancy but adds joins. Star schemas are generally preferred in analytical workloads for query simplicity and performance.
 
 ---
 

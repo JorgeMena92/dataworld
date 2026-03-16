@@ -8,7 +8,8 @@ tags: [sql, performance, indexes]
 
 Indexes are the primary tool for improving query performance. This page covers index strategy — when to add them, how to choose the right columns, and the tradeoffs involved.
 
-> For index DDL syntax (CREATE INDEX, DROP INDEX, index types), see **Definition (DDL) → Indexes**.
+!!! note
+    This page covers index strategy — when to add them, how to choose the right columns, and the tradeoffs involved. For index DDL syntax (`CREATE INDEX`, `DROP INDEX`, index types), see [DDL → Indexes](indexes-ddl.md).
 
 ---
 
@@ -192,7 +193,13 @@ ALTER INDEX idx_orders_customer_id ON orders REBUILD;
 
 -- SQL Server — reorganize (lighter, online operation)
 ALTER INDEX idx_orders_customer_id ON orders REORGANIZE;
+
+-- MySQL — rebuild indexes by recreating the table engine
+OPTIMIZE TABLE orders;
 ```
+
+!!! note
+    There is no ANSI SQL standard for index maintenance. `REINDEX` is PostgreSQL syntax. SQL Server uses `ALTER INDEX ... REBUILD` or `REORGANIZE`. MySQL uses `OPTIMIZE TABLE`. Always refer to your platform's documentation for index maintenance commands and online vs offline operation support.
 
 ---
 
@@ -210,7 +217,27 @@ SELECT
 FROM pg_stat_user_indexes
 WHERE idx_scan = 0
 ORDER BY tablename, indexname;
+
+-- SQL Server — find indexes with zero user seeks, scans, or lookups
+SELECT
+    OBJECT_NAME(i.object_id)  AS table_name,
+    i.name                    AS index_name,
+    u.user_seeks,
+    u.user_scans,
+    u.user_lookups
+FROM sys.indexes i
+LEFT JOIN sys.dm_db_index_usage_stats u
+    ON i.object_id = u.object_id
+    AND i.index_id = u.index_id
+    AND u.database_id = DB_ID()
+WHERE OBJECT_NAME(i.object_id) NOT LIKE 'sys%'
+  AND i.type > 0  -- exclude heap
+  AND (u.user_seeks IS NULL OR u.user_seeks + u.user_scans + u.user_lookups = 0)
+ORDER BY table_name, index_name;
 ```
+
+!!! warning
+    Usage stats in `pg_stat_user_indexes` and `sys.dm_db_index_usage_stats` reset when the database service restarts. Collect them over a representative period before dropping any index.
 
 ---
 

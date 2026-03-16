@@ -26,13 +26,25 @@ ADD COLUMN is_priority BOOLEAN DEFAULT FALSE;
 ### Drop a Column
 
 ```sql
+-- ANSI SQL
 ALTER TABLE customers
 DROP COLUMN phone;
 
--- Drop only if it exists (PostgreSQL)
+-- Vendor extension — supported in PostgreSQL and MySQL 8.0+, not in SQL Server or Oracle
 ALTER TABLE customers
 DROP COLUMN IF EXISTS phone;
 ```
+
+!!! note
+    `DROP COLUMN IF EXISTS` is not ANSI SQL — it is a vendor extension. In SQL Server, check `INFORMATION_SCHEMA.COLUMNS` first:
+    ```sql
+    -- SQL Server workaround
+    IF EXISTS (
+        SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_NAME = 'customers' AND COLUMN_NAME = 'phone'
+    )
+        ALTER TABLE customers DROP COLUMN phone;
+    ```
 
 ### Rename a Column
 
@@ -44,9 +56,13 @@ RENAME COLUMN phone TO phone_number;
 ### Change a Column's Data Type
 
 ```sql
+-- ANSI SQL
 ALTER TABLE customers
-ALTER COLUMN phone TYPE VARCHAR(30);
+ALTER COLUMN phone SET DATA TYPE VARCHAR(30);
 ```
+
+!!! note
+    `ALTER COLUMN ... SET DATA TYPE` is the ANSI SQL form. PostgreSQL uses `ALTER COLUMN ... TYPE`, SQL Server uses `ALTER COLUMN phone VARCHAR(30)` with no keyword. MySQL uses `MODIFY COLUMN`. Always verify syntax for your platform before running in production.
 
 !!! warning
     Changing a column's data type can fail if existing data is incompatible with the new type. Always check the data before altering types in production.
@@ -117,6 +133,8 @@ ALTER COLUMN status DROP DEFAULT;
 
 ## ALTER INDEX
 
+`ALTER INDEX` modifies an existing index. The most common operation is renaming — structural index changes typically require dropping and recreating the index instead.
+
 ```sql
 -- Rename an index
 ALTER INDEX idx_orders_customer_id
@@ -126,6 +144,8 @@ RENAME TO idx_orders_cust;
 ---
 
 ## ALTER SCHEMA
+
+`ALTER SCHEMA` modifies an existing schema. Renaming is the most common use — moving objects between schemas is handled separately by each platform.
 
 ```sql
 -- Rename a schema
@@ -148,7 +168,8 @@ ADD CONSTRAINT chk_loyalty_tier
     CHECK (loyalty_tier IN ('standard', 'silver', 'gold', 'platinum'));
 ```
 
-Each migration script should be:
+Each migration script should follow these principles to be safe and maintainable:
+
 - Idempotent where possible (`IF NOT EXISTS`, `IF EXISTS`)
 - Version-controlled alongside application code
 - Tested in a lower environment before production

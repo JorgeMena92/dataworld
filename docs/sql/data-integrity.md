@@ -17,6 +17,7 @@ Data integrity means the data in your database is accurate, consistent, and trus
 | **Entity** | Each row is uniquely identifiable | Primary keys |
 | **Referential** | Foreign keys point to existing rows | Foreign key constraints |
 | **Domain** | Values fall within accepted ranges | Data types, CHECK, NOT NULL |
+| **User-defined** | Business rules that span columns or tables | CHECK constraints, triggers, application logic |
 | **Pipeline** | Loads are complete, consistent, and non-duplicating | Validation queries, defensive DML |
 
 ---
@@ -37,6 +38,9 @@ CREATE TABLE orders (
 ```
 
 Any `INSERT` or `UPDATE` that violates a constraint fails immediately — before the data is written.
+
+!!! note
+    This section covers constraints in the context of data integrity. For the full treatment of constraint types, syntax, naming conventions, and deferrable constraints, see [Constraints](constraints.md).
 
 ---
 
@@ -145,12 +149,16 @@ FROM customers
 GROUP BY customer_id
 HAVING COUNT(*) > 1;
 
--- Remove duplicates — keep the latest record per key
+-- Remove duplicates — keep the latest record per key using NOT EXISTS
 DELETE FROM customers
-WHERE customer_id NOT IN (
-    SELECT MAX(customer_id)
-    FROM customers
-    GROUP BY email
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM (
+        SELECT MAX(created_at) AS latest_created_at
+        FROM customers c2
+        WHERE c2.email = customers.email
+    ) latest
+    WHERE latest.latest_created_at = customers.created_at
 );
 
 -- Deduplicate with ROW_NUMBER before inserting
@@ -166,6 +174,9 @@ SELECT * FROM (
 ) t
 WHERE rn = 1;
 ```
+
+!!! note
+    For a full treatment of deduplication patterns including staging table approaches and idempotent loads, see [Deduplication](patterns-deduplication.md).
 
 ---
 

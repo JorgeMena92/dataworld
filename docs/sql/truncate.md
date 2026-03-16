@@ -15,9 +15,12 @@ tags: [sql, ddl, truncate]
 ```sql
 TRUNCATE TABLE orders;
 
--- Multiple tables (some databases)
+-- Multiple tables at once
 TRUNCATE TABLE staging_orders, staging_customers;
 ```
+
+!!! note
+    Truncating multiple tables in a single statement is supported in PostgreSQL and SQL Server. MySQL does not support it for InnoDB tables with active foreign key constraints — truncate each table individually in that case.
 
 ---
 
@@ -130,9 +133,12 @@ COMMIT;
 | Feature | ANSI SQL | SQL Server | PostgreSQL | MySQL |
 |---|---|---|---|---|
 | Basic TRUNCATE | ✅ | ✅ | ✅ | ✅ |
-| Resets identity | ✅ | ✅ | ✅ | ✅ |
+| Resets identity | Depends | ✅ | ✅ | ✅ |
 | CASCADE support | — | ❌ | ✅ | ❌ |
 | Transactional | Depends | ✅ | ✅ | ❌ |
+
+!!! note
+    Identity/sequence reset on `TRUNCATE` is not defined by the ANSI SQL standard — it is implementation-specific behavior. All major platforms reset the counter but the starting value may vary. For a full comparison of `TRUNCATE` vs `DELETE` behavior including rollback support and trigger firing, see [DELETE](delete.md#delete-vs-truncate).
 
 ---
 

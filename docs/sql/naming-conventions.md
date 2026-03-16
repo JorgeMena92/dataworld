@@ -82,6 +82,10 @@ Name constraints explicitly using a consistent prefix pattern.
 | `fk_` | Foreign key | `fk_orders_customer` |
 | `uq_` | Unique | `uq_customers_email` |
 | `chk_` | Check | `chk_orders_amount_positive` |
+| `idx_` | Index | `idx_orders_customer_id` |
+
+!!! note
+    `NOT NULL` constraints are always defined inline on the column and cannot be named — there is no prefix convention for them. `DEFAULT` follows the same rule — it is always inline and never named.
 
 ```sql
 CREATE TABLE orders (
@@ -98,6 +102,8 @@ CREATE TABLE orders (
 ---
 
 ## Indexes
+
+Indexes follow the same `idx_` prefix shown in the constraint table above.
 
 ```
 idx_<table>_<column(s)>

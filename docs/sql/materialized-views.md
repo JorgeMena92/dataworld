@@ -10,6 +10,9 @@ A materialized view is a view that physically stores its query results. Unlike a
 
 This makes materialized views significantly faster to query, at the cost of data freshness.
 
+!!! note
+    Materialized views are not part of the ANSI SQL standard. Support, syntax, and refresh behavior vary significantly across platforms — see the [Vendor Support](#vendor-support) section for details.
+
 ---
 
 ## View vs Materialized View
@@ -31,14 +34,21 @@ This makes materialized views significantly faster to query, at the cost of data
 -- PostgreSQL
 CREATE MATERIALIZED VIEW monthly_revenue AS
 SELECT
-    DATE_TRUNC('month', order_date) AS month,
+    EXTRACT(YEAR  FROM order_date) AS order_year,
+    EXTRACT(MONTH FROM order_date) AS order_month,
     country,
-    SUM(amount)  AS total_revenue,
-    COUNT(*)     AS total_orders
+    SUM(amount) AS total_revenue,
+    COUNT(*)    AS total_orders
 FROM orders
 JOIN customers USING (customer_id)
-GROUP BY 1, 2;
+GROUP BY
+    EXTRACT(YEAR  FROM order_date),
+    EXTRACT(MONTH FROM order_date),
+    country;
 ```
+
+!!! note
+    `DATE_TRUNC` is a common alternative for truncating dates to month boundaries but is not ANSI SQL. The `EXTRACT(YEAR ...)` / `EXTRACT(MONTH ...)` approach above is fully portable. See [Scalar Functions](scalar-functions.md).
 
 ---
 
@@ -77,7 +87,10 @@ ON monthly_revenue (country);
 ## Dropping a Materialized View
 
 ```sql
+-- ANSI SQL (where supported)
 DROP MATERIALIZED VIEW monthly_revenue;
+
+-- Vendor extension — supported in PostgreSQL, Oracle, Snowflake
 DROP MATERIALIZED VIEW IF EXISTS monthly_revenue;
 ```
 
@@ -90,16 +103,19 @@ DROP MATERIALIZED VIEW IF EXISTS monthly_revenue;
 ```sql
 CREATE MATERIALIZED VIEW sales_dashboard AS
 SELECT
-    DATE_TRUNC('day', order_date)  AS day,
+    CAST(order_date AS DATE)  AS day,
     c.country,
     c.segment,
-    COUNT(*)                        AS orders,
-    SUM(o.amount)                   AS revenue,
-    AVG(o.amount)                   AS avg_order_value
+    COUNT(*)                  AS orders,
+    SUM(o.amount)             AS revenue,
+    AVG(o.amount)             AS avg_order_value
 FROM orders o
 JOIN customers c ON o.customer_id = c.customer_id
 WHERE o.status = 'completed'
-GROUP BY 1, 2, 3;
+GROUP BY
+    CAST(order_date AS DATE),
+    c.country,
+    c.segment;
 
 -- Refresh daily
 REFRESH MATERIALIZED VIEW sales_dashboard;

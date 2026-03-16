@@ -213,7 +213,8 @@ Short, actionable rules. What to do, what to avoid, and why.
 
 | Version | Description |
 |---------|-------------|
-| v2.2.0 | DML section reviewed — ANSI fixes across INSERT, UPDATE, DELETE, MERGE, Transactions, Bulk Operations, Incremental Loading; Test Before You Execute pattern added; broken relative links fixed |
+| v2.3.0 | DDL, Database Objects, Performance, and SQL Patterns sections reviewed — ANSI fixes, cross-references, vendor notes, structural consistency across 29 pages |
+| v2.2.0 | DML section reviewed — ANSI fixes across INSERT, UPDATE, DELETE, MERGE, Transactions, Bulk Operations, Incremental Loading; broken relative links fixed |
 | v2.1.0 | DQL section reviewed — ANSI fixes, new scalar-functions.md, EXISTS coverage, non-equi joins, named windows, NTH_VALUE; Handbook layered framework generalized |
 | v2.0.1 | Handbook: Layered Framework — interactive accordion diagram replacing Mermaid flowchart |
 | v2.0.0 | SQL section fully rebuilt — ANSI-first, 50+ pages across DQL, DML, DDL, Database Objects, Performance, and SQL Patterns |

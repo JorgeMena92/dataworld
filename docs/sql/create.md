@@ -78,6 +78,26 @@ GROUP BY country;
 
 ---
 
+## CREATE DATABASE
+
+A database is the top-level container for all schemas and objects. It is typically created once during environment setup.
+
+```sql
+-- ANSI SQL
+CREATE DATABASE sales_db;
+
+-- With explicit encoding (PostgreSQL)
+CREATE DATABASE sales_db ENCODING 'UTF8';
+
+-- SQL Server
+CREATE DATABASE sales_db;
+```
+
+!!! note
+    In MySQL, `CREATE DATABASE` and `CREATE SCHEMA` are equivalent — they create the same object. In PostgreSQL and SQL Server, databases and schemas are distinct levels of the hierarchy: a database contains schemas, and schemas contain tables.
+
+---
+
 ## CREATE SCHEMA
 
 Schemas organize objects into logical namespaces within a database.
@@ -117,7 +137,8 @@ CREATE INDEX idx_orders_status_date
 ON orders (status, created_at);
 ```
 
-> See the **Indexes** page for full coverage of index types, strategies, and DDL patterns.
+!!! note
+    See [Indexes](indexes-ddl.md) for full coverage of index types, strategies, and DDL patterns.
 
 ---
 
@@ -138,6 +159,9 @@ CREATE TABLE customers (
     email       VARCHAR(255) NOT NULL
 );
 ```
+
+!!! note
+    `NEXT VALUE FOR` is ANSI SQL but not universally supported. PostgreSQL uses `nextval('customer_id_seq')`. For new tables prefer `GENERATED ALWAYS AS IDENTITY` (below) — it is more portable and requires no separate sequence object.
 
 ### ANSI Identity Column (preferred)
 
@@ -163,7 +187,8 @@ WHERE is_active = TRUE;
 SELECT * FROM active_customers;
 ```
 
-> See the **Views** page under Database Objects for full coverage.
+!!! note
+    See [Views](views.md) under Database Objects for full coverage.
 
 ---
 
@@ -175,6 +200,16 @@ SELECT * FROM active_customers;
 | IF NOT EXISTS | ✅ | ✅ (2016+) | ✅ | ✅ |
 | CTAS | ✅ | `SELECT INTO` | ✅ | ✅ |
 | Schema creation | ✅ | ✅ | ✅ | ✅ (= database) |
+
+!!! note
+    SQL Server's `SELECT INTO` is the equivalent of `CREATE TABLE ... AS SELECT` — it creates the table and inserts the data in one step:
+    ```sql
+    -- SQL Server CTAS equivalent
+    SELECT * INTO orders_2024
+    FROM orders
+    WHERE EXTRACT(YEAR FROM created_at) = 2024;
+    ```
+    Unlike standard `CTAS`, `SELECT INTO` does not support `IF NOT EXISTS` and does not copy constraints or indexes.
 
 ---
 

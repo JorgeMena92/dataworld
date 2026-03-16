@@ -21,6 +21,9 @@ Constraints enforce rules on the data stored in a table. They are defined at the
 | `CHECK` | Validates values against a condition |
 | `DEFAULT` | Provides a default value when none is supplied |
 
+!!! note
+    `DEFAULT` is included here for completeness but behaves differently from the other constraint types — it does not prevent invalid data, it only supplies a fallback value when `INSERT` does not provide one. The remaining five constraint types actively enforce rules and reject invalid data.
+
 ---
 
 ## PRIMARY KEY
@@ -159,6 +162,12 @@ CREATE TABLE products (
 );
 ```
 
+!!! warning
+    A `CHECK` constraint evaluates to UNKNOWN (not FALSE) when any column in the condition is NULL — which means NULL values silently pass the check. If a column must satisfy a condition and never be NULL, combine `CHECK` with `NOT NULL`:
+    ```sql
+    price DECIMAL(10, 2) NOT NULL CHECK (price > 0)
+    ```
+
 ---
 
 ## DEFAULT
@@ -223,15 +232,20 @@ DROP CONSTRAINT chk_price_positive;
 
 ## Deferrable Constraints
 
-ANSI SQL supports deferring constraint checks to the end of a transaction — useful when inserting rows with circular references.
+ANSI SQL supports deferring constraint checks to the end of a transaction — useful when inserting rows with circular references or when the order of inserts would temporarily violate a constraint.
 
 ```sql
--- PostgreSQL
+-- ANSI SQL — deferrable foreign key
 ALTER TABLE orders
 ADD CONSTRAINT fk_orders_customer
     FOREIGN KEY (customer_id) REFERENCES customers (customer_id)
     DEFERRABLE INITIALLY DEFERRED;
 ```
+
+When set to `INITIALLY DEFERRED`, the constraint is checked at `COMMIT` rather than at each statement. When set to `INITIALLY IMMEDIATE` (the default), it is checked after each statement but can be deferred explicitly within a transaction.
+
+!!! note
+    `DEFERRABLE` constraints are supported in PostgreSQL and Oracle. SQL Server does not support deferrable constraints — referential integrity is always checked immediately after each statement in SQL Server.
 
 ---
 

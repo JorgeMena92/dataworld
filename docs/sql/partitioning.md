@@ -97,7 +97,30 @@ CREATE TABLE events_3 PARTITION OF events FOR VALUES WITH (MODULUS 4, REMAINDER 
 
 ---
 
-## Partition Pruning
+## Partitioning in SQL Server
+
+SQL Server uses a different approach — partitioning requires a `PARTITION FUNCTION` to define the boundaries and a `PARTITION SCHEME` to map them to filegroups.
+
+```sql
+-- Step 1: define the partition boundaries
+CREATE PARTITION FUNCTION pf_orders_by_year (DATE)
+AS RANGE RIGHT FOR VALUES ('2023-01-01', '2024-01-01', '2025-01-01');
+
+-- Step 2: map partitions to filegroups
+CREATE PARTITION SCHEME ps_orders_by_year
+AS PARTITION pf_orders_by_year
+ALL TO ([PRIMARY]);
+
+-- Step 3: create the table using the partition scheme
+CREATE TABLE orders (
+    order_id   INT,
+    order_date DATE NOT NULL,
+    amount     DECIMAL(10, 2)
+) ON ps_orders_by_year (order_date);
+```
+
+!!! note
+    SQL Server's partition function and scheme approach is more verbose than PostgreSQL's declarative syntax but offers more control over physical storage placement. Partition pruning works the same way — filter directly on the partition key column without wrapping functions.
 
 Partition pruning is when the optimizer eliminates partitions that cannot contain matching rows — based on the `WHERE` clause.
 
@@ -110,16 +133,20 @@ EXPLAIN SELECT * FROM orders WHERE amount > 1000;
 ```
 
 !!! tip
-    For partition pruning to work, the `WHERE` clause must reference the partition key directly — without functions or expressions that obscure the value.
+    For partition pruning to work, the `WHERE` clause must reference the partition key directly — without functions or expressions that wrap the column value.
 
 ```sql
 -- Pruning works ✅
 WHERE order_date = '2024-06-15'
 WHERE order_date >= '2024-01-01' AND order_date < '2025-01-01'
 
--- Pruning does NOT work ❌
-WHERE EXTRACT(YEAR FROM order_date) = 2024  -- function prevents pruning
+-- Pruning does NOT work ❌ — any function applied to the partition key column prevents pruning
+WHERE EXTRACT(YEAR FROM order_date) = 2024  -- wraps the column in a function
+WHERE DATE_TRUNC('month', order_date) = '2024-01-01'  -- same issue
 ```
+
+!!! note
+    This is not specific to `EXTRACT` — it applies to any function or expression on the partition key column. The fix is always the same: rewrite the condition as a range directly on the column value. For example, replace `EXTRACT(YEAR FROM order_date) = 2024` with `order_date >= '2024-01-01' AND order_date < '2025-01-01'`.
 
 ---
 
@@ -174,8 +201,8 @@ CREATE TABLE orders
 PARTITION BY DATE(order_date)
 AS SELECT * FROM source_orders;
 
--- BigQuery — query only hits the relevant partition
-SELECT * FROM orders WHERE DATE(order_date) = '2024-06-15';
+-- BigQuery — filter directly on the partition column for pruning
+SELECT * FROM orders WHERE order_date = '2024-06-15';
 ```
 
 ---

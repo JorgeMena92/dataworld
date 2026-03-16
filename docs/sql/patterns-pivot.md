@@ -86,10 +86,10 @@ ORDER BY product;
 -- Equivalent ANSI SQL — portable across all databases
 SELECT
     product,
-    SUM(CASE WHEN month = 'Jan' THEN revenue END) AS [Jan],
-    SUM(CASE WHEN month = 'Feb' THEN revenue END) AS [Feb],
-    SUM(CASE WHEN month = 'Mar' THEN revenue END) AS [Mar],
-    SUM(CASE WHEN month = 'Apr' THEN revenue END) AS [Apr]
+    SUM(CASE WHEN month = 'Jan' THEN revenue END) AS jan,
+    SUM(CASE WHEN month = 'Feb' THEN revenue END) AS feb,
+    SUM(CASE WHEN month = 'Mar' THEN revenue END) AS mar,
+    SUM(CASE WHEN month = 'Apr' THEN revenue END) AS apr
 FROM monthly_sales
 GROUP BY product;
 ```
@@ -139,13 +139,13 @@ ORDER BY product, month;
 
 ```sql
 -- Portable UNION ALL approach
-SELECT product, 'Jan' AS month, [Jan] AS revenue FROM product_monthly
+SELECT product, 'Jan' AS month, jan AS revenue FROM product_monthly
 UNION ALL
-SELECT product, 'Feb' AS month, [Feb] AS revenue FROM product_monthly
+SELECT product, 'Feb' AS month, feb AS revenue FROM product_monthly
 UNION ALL
-SELECT product, 'Mar' AS month, [Mar] AS revenue FROM product_monthly
+SELECT product, 'Mar' AS month, mar AS revenue FROM product_monthly
 UNION ALL
-SELECT product, 'Apr' AS month, [Apr] AS revenue FROM product_monthly
+SELECT product, 'Apr' AS month, apr AS revenue FROM product_monthly
 ORDER BY product, month;
 ```
 
@@ -162,8 +162,8 @@ CREATE EXTENSION IF NOT EXISTS tablefunc;
 -- Pivot using crosstab
 SELECT *
 FROM crosstab(
-    'SELECT product, month, revenue FROM monthly_sales ORDER BY 1, 2',
-    'SELECT DISTINCT month FROM monthly_sales ORDER BY 1'
+    'SELECT product, month, revenue FROM monthly_sales ORDER BY product, month',
+    'SELECT DISTINCT month FROM monthly_sales ORDER BY month'
 ) AS ct (product TEXT, jan NUMERIC, feb NUMERIC, mar NUMERIC, apr NUMERIC);
 ```
 
@@ -180,6 +180,9 @@ FROM crosstab(
 | SQL Server only | Native `PIVOT` / `UNPIVOT` for readability |
 | Migrating from SQL Server | Rewrite as `CASE WHEN` / `UNION ALL` |
 | Dynamic columns (unknown at query time) | Dynamic SQL with string building |
+
+!!! note
+    Dynamic pivots — where the column values are not known at query write time — cannot be expressed in static SQL. The two main approaches are: (1) build the SQL string dynamically in a stored procedure using `EXEC` (SQL Server) or `EXECUTE` (PostgreSQL), or (2) handle the transformation in the application layer or pipeline tool (Python, dbt, Spark) where column lists can be computed at runtime. This is the recommended approach for production pipelines where the list of pivot values changes over time.
 
 ---
 

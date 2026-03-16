@@ -8,6 +8,9 @@ tags: [sql, performance, execution-plans]
 
 An execution plan shows exactly how the database engine will execute a query — which indexes it uses, how it joins tables, how many rows it processes at each step, and where the time is spent. Reading execution plans is the most reliable way to diagnose slow queries.
 
+!!! note
+    There is no ANSI SQL standard for execution plans. `EXPLAIN` and `EXPLAIN ANALYZE` are PostgreSQL syntax, also supported in MySQL. SQL Server uses `SET SHOWPLAN_TEXT`, `SET STATISTICS PROFILE`, and graphical plans in SSMS. Each platform has its own plan format and terminology — the concepts (scans, joins, estimates vs actuals) are universal, but the commands and output differ.
+
 ---
 
 ## EXPLAIN
@@ -127,7 +130,7 @@ rows=1 (estimated) vs rows=500000 (actual) → bad estimate
 
 **`Nested Loop` on large outer input** — can be slow if the inner side is not indexed.
 
-**`Hash Join` with large hash table** — check `work_mem` settings if the hash spills to disk.
+**`Hash Join` with large hash table** — check `work_mem` settings if the hash spills to disk (`work_mem` is the PostgreSQL session memory limit for sort and hash operations — increase it if hash joins are spilling to disk).
 
 ---
 
@@ -173,6 +176,38 @@ SET STATISTICS TIME OFF;
 ```
 
 In SSMS: use **Query → Include Actual Execution Plan** (Ctrl+M) for the graphical view.
+
+---
+
+## MySQL Execution Plans
+
+MySQL uses `EXPLAIN` with a tabular output format showing one row per query step.
+
+```sql
+-- MySQL estimated plan
+EXPLAIN
+SELECT * FROM orders WHERE customer_id = 42;
+
+-- MySQL actual plan (8.0.18+)
+EXPLAIN ANALYZE
+SELECT * FROM orders WHERE customer_id = 42;
+
+-- JSON format for more detail
+EXPLAIN FORMAT=JSON
+SELECT * FROM orders WHERE customer_id = 42;
+```
+
+Key columns in MySQL `EXPLAIN` output:
+
+| Column | Meaning |
+|---|---|
+| `type` | Join type — `ALL` is a full scan, `ref`/`eq_ref` use indexes |
+| `key` | Index used (NULL = no index) |
+| `rows` | Estimated rows examined |
+| `Extra` | Additional info — `Using index`, `Using filesort`, `Using temporary` |
+
+!!! tip
+    In MySQL, `type: ALL` in the `EXPLAIN` output means a full table scan — the equivalent of `Seq Scan` in PostgreSQL. `Using filesort` or `Using temporary` in the `Extra` column indicate expensive operations worth investigating.
 
 ---
 
