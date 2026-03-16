@@ -164,7 +164,6 @@ body {
    9. NAVIGATION
    ───────────────────────────────────────────────────────── */
 
-/* Bold only when the sub-section is expanded/active */
 .md-nav__item--nested .md-nav__toggle:checked ~ .md-nav__link,
 .md-nav__item--nested > .md-nav__link[aria-expanded="true"] {
   font-weight: 600;
@@ -294,10 +293,11 @@ body {
   color: var(--brand-mint-dark);
   border-radius: 4px;
   padding: 0.1em 0.4em;
-  font-size: 0.88em;
+  font-size: 0.8rem;
 }
 
 .md-typeset pre {
+  background-color: #fafafa;
   border-radius: 10px;
   border: 1px solid var(--brand-border);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
@@ -305,6 +305,7 @@ body {
 }
 
 [data-md-color-scheme="slate"] .md-typeset pre {
+  background-color: #242424;
   box-shadow: 0 2px 16px rgba(0, 0, 0, 0.3);
 }
 
@@ -335,7 +336,7 @@ body {
   border-radius: 8px;
   border-left-width: 3px;
   box-shadow: none;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
 }
 
 .md-typeset .admonition.tip,
@@ -354,11 +355,11 @@ body {
   border-radius: 8px;
   overflow: hidden;
   border: 1px solid var(--brand-border);
-  font-size: 0.875rem;
+  font-size: 0.8rem;
 }
 
 .md-typeset table:not([class]) th {
-  background-color: var(--brand-surface) !important;
+  background-color: var(--brand-border) !important;
   font-weight: 600;
   font-size: 0.75rem;
   letter-spacing: 0.05em;
@@ -369,8 +370,12 @@ body {
 }
 
 .md-typeset table:not([class]) td {
-  background-color: var(--brand-surface) !important;
+  background-color: #fafafa !important;
   padding: 0.3em 1em;
+}
+
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) td {
+  background-color: #242424 !important;
 }
 
 .md-typeset table:not([class]) tr:hover td {
@@ -453,7 +458,7 @@ body {
   font-weight: 400;
   letter-spacing: -0.03em;
   line-height: 1.1;
-  color: var(--brand-ink) !important; /* overrides global h1 green */
+  color: var(--brand-ink) !important;
   margin: 0 0 0.75rem;
 }
 
@@ -600,9 +605,10 @@ body {
   color: var(--brand-ink) !important;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   LAYERED FRAMEWORK DIAGRAM
-   ═══════════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────────────────────
+   22. LAYERED FRAMEWORK DIAGRAM
+   ───────────────────────────────────────────────────────── */
 
 .fw-connector {
   width: 2px !important;
@@ -620,10 +626,12 @@ body {
   background: #ffffff !important;
   border-color: var(--brand-border, #e0e0e0) !important;
 }
+
 .fw-layers details.fw-layer:first-child {
   border-radius: 10px 10px 0 0 !important;
   border-top-color: var(--brand-border, #e0e0e0) !important;
 }
+
 .fw-layers details.fw-layer:last-child {
   border-radius: 0 0 10px 10px !important;
 }
@@ -636,6 +644,7 @@ body {
   justify-content: flex-start !important;
   text-align: left !important;
 }
+
 .fw-layers details.fw-layer > summary::before,
 .fw-layers details.fw-layer > summary::after {
   display: none !important;
@@ -647,18 +656,20 @@ body {
   align-items: flex-start !important;
 }
 
-/* ── dark mode ── */
 [data-md-color-scheme="slate"] .fw-layers details.fw-layer {
   background: #242424 !important;
   border-color: #2a2a2a !important;
 }
+
 [data-md-color-scheme="slate"] .fw-layers details.fw-layer > summary,
 [data-md-color-scheme="slate"] .fw-layers details.fw-layer[open] > summary {
   background: #242424 !important;
 }
+
 [data-md-color-scheme="slate"] .fw-layers details.fw-layer .fw-name {
   color: var(--brand-mint, #3cb371) !important;
 }
+
 [data-md-color-scheme="slate"] .fw-layers details.fw-layer .fw-sub,
 [data-md-color-scheme="slate"] .fw-layers details.fw-layer .fw-body ul li {
   color: #f0f0f0 !important;
