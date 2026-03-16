@@ -135,11 +135,23 @@ nav:
     - Licensing: powerbi/licensing.md
   #- Databricks: databricks/index.md
   #- Projects: projects/index.md
+  - Operations:
+    - operations/index.md
+    - Support Framework:
+      - operations/support/index.md
+      - Layered Triage: operations/support/layered-fw.md
+      - Incident Management: operations/support/incident-management.md
+      - Daily Operations: operations/support/daily-operations.md
+      - Incident Tracking: operations/support/incident-tracking.md
+      - Communication Standards: operations/support/communication-standards.md
+    - Runbooks:
+      - operations/runbooks/index.md
+    - Monitoring & Alerting:
+      - operations/monitoring/index.md
   - Handbook:
     - handbook/index.md
     - References: handbook/references.md
     - Data Roles: handbook/data-roles.md
-    - Layered Data Platform Support Framework: handbook/layered-fw.md
   - About: about.md
 
   # ── Add sub-pages below as you create the .md files ──────────────────
