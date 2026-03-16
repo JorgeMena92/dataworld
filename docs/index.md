@@ -25,6 +25,12 @@ hide:
     <div class="card__desc">DAX logic, data modeling ideas, and reporting-oriented solutions.</div>
   </a>
 
+  <a href="operations/" class="card">
+    <span class="card__icon">🛡️</span>
+    <div class="card__title">Operations</div>
+    <div class="card__desc">Support frameworks, incident management, runbooks, and platform monitoring.</div>
+  </a>
+
   <a href="handbook/" class="card">
     <span class="card__icon">🗂️</span>
     <div class="card__title">Handbook</div>

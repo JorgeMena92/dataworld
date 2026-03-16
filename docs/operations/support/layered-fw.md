@@ -3,7 +3,7 @@ title: Layered Data Platform Support Framework
 description: Work from the presentation layer inward to the data source, then check infrastructure and security. Eliminate each layer before proceeding to the next.
 ---
 
-# Layered Data Platform Support Framework
+# Layered Triage
 
 Work from the **presentation layer inward** to the data source, then check infrastructure and security. Eliminate each layer before proceeding to the next.
 

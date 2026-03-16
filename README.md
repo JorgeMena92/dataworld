@@ -1,7 +1,7 @@
 # Jorge Mena — Data World
 
 Personal knowledge base built with [MkDocs Material](https://squidfunk.github.io/mkdocs-material/).  
-Covers SQL, Power BI, and data engineering patterns — combining theoretical foundations with practical experience from real projects.
+Covers SQL, Power BI, data engineering patterns, and platform operations — combining theoretical foundations with practical experience from real projects.
 
 🌐 **Live site:** https://jorgemena92.github.io/dataworld/
 
@@ -41,8 +41,8 @@ Tag releases before deploying:
 
 ```bash
 git add .
-git commit -m "v2.0.0 - description"
-git tag v2.0.0
+git commit -m "v2.4.0 - description"
+git tag v2.4.0
 git push origin main --tags
 python -m mkdocs gh-deploy
 ```
@@ -51,7 +51,7 @@ python -m mkdocs gh-deploy
 
 ## Adding Content
 
-1. Create a `.md` file inside the relevant folder (`docs/sql/`, `docs/powerbi/`, `docs/handbook/`, etc.)
+1. Create a `.md` file inside the relevant folder (`docs/sql/`, `docs/powerbi/`, `docs/operations/`, `docs/handbook/`, etc.)
 2. Add frontmatter at the top:
 
 ```yaml
@@ -148,6 +148,7 @@ Short, actionable rules. What to do, what to avoid, and why.
     │   ├── filtering-conditions.md
     │   ├── sorting-limiting.md
     │   ├── data-types-casting.md
+    │   ├── scalar-functions.md
     │   ├── aggregations.md
     │   ├── joins.md
     │   ├── set-operations.md
@@ -169,6 +170,7 @@ Short, actionable rules. What to do, what to avoid, and why.
     │   ├── drop.md
     │   ├── truncate.md
     │   ├── constraints.md
+    │   ├── data-integrity.md
     │   ├── indexes-ddl.md
     │   ├── naming-conventions.md
     │   ├── schema-design.md
@@ -177,9 +179,9 @@ Short, actionable rules. What to do, what to avoid, and why.
     │   ├── functions.md
     │   ├── stored-procedures.md
     │   ├── triggers.md
+    │   ├── execution-plans.md
     │   ├── query-optimization.md
     │   ├── indexes.md
-    │   ├── execution-plans.md
     │   ├── partitioning.md
     │   ├── patterns-gaps-islands.md
     │   ├── patterns-running-totals.md
@@ -200,11 +202,23 @@ Short, actionable rules. What to do, what to avoid, and why.
     │   ├── power-query.md
     │   ├── deployment.md
     │   └── licensing.md
+    ├── operations/
+    │   ├── index.md
+    │   ├── support/
+    │   │   ├── index.md
+    │   │   ├── layered-fw.md
+    │   │   ├── incident-management.md
+    │   │   ├── daily-operations.md
+    │   │   ├── incident-tracking.md
+    │   │   └── communication-standards.md
+    │   ├── runbooks/
+    │   │   └── index.md
+    │   └── monitoring/
+    │       └── index.md
     └── handbook/
         ├── index.md
         ├── references.md
-        ├── data-roles.md
-        └── layered-fw.md
+        └── data-roles.md
 ```
 
 ---
@@ -213,6 +227,7 @@ Short, actionable rules. What to do, what to avoid, and why.
 
 | Version | Description |
 |---------|-------------|
+| v2.4.0 | Operations section — Support Framework (Layered Triage, Incident Management, Daily Operations, Incident Tracking, Communication Standards), Runbooks and Monitoring stubs; CSS cleanup and consistency pass |
 | v2.3.0 | DDL, Database Objects, Performance, and SQL Patterns sections reviewed — ANSI fixes, cross-references, vendor notes, structural consistency across 29 pages |
 | v2.2.0 | DML section reviewed — ANSI fixes across INSERT, UPDATE, DELETE, MERGE, Transactions, Bulk Operations, Incremental Loading; broken relative links fixed |
 | v2.1.0 | DQL section reviewed — ANSI fixes, new scalar-functions.md, EXISTS coverage, non-equi joins, named windows, NTH_VALUE; Handbook layered framework generalized |
