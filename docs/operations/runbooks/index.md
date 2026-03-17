@@ -12,6 +12,36 @@ Runbooks reduce mean time to resolution (MTTR) for recurring issues, enable less
 
 ---
 
+## Layered Triage vs Runbook
+
+| | Layered Triage | Runbook |
+|---|---|---|
+| **When to use** | Unknown incident — you don't know what's wrong yet | Known issue — you have already identified the problem |
+| **Structure** | Generic layers to eliminate one by one | Step-by-step fix for a specific scenario |
+| **Output** | Root cause identified | Issue resolved |
+| **Example** | "Work from the presentation layer inward" | "Job stuck in pending — follow these 5 steps" |
+
+## How They Work Together
+
+In practice, Layered Triage and Runbooks complement each other across the incident lifecycle:
+
+<div style="display:flex;align-items:center;justify-content:center;gap:0;margin:1.5rem 0;flex-wrap:wrap;">
+  <div style="background:#EAF0FB;color:#1F3864;border:1.5px solid #2E75B6;border-radius:8px;padding:0.6rem 1.2rem;font-weight:600;font-size:0.8rem;text-align:center;">🔍 Incident<br>detected</div>
+  <div style="color:#7a7a7a;font-size:1.2rem;padding:0 0.25rem;">→</div>
+  <div style="background:#EAF0FB;color:#1F3864;border:1.5px solid #2E75B6;border-radius:8px;padding:0.6rem 1.2rem;font-weight:600;font-size:0.8rem;text-align:center;">🗂️ Layered Triage<br>finds root cause</div>
+  <div style="color:#7a7a7a;font-size:1.2rem;padding:0 0.25rem;">→</div>
+  <div style="background:#EAF0FB;color:#1F3864;border:1.5px solid #2E75B6;border-radius:8px;padding:0.6rem 1.2rem;font-weight:600;font-size:0.8rem;text-align:center;">📋 Check for<br>a Runbook</div>
+  <div style="color:#7a7a7a;font-size:1.2rem;padding:0 0.25rem;">→</div>
+  <div style="background:#EAF0FB;color:#1F3864;border:1.5px solid #2E75B6;border-radius:8px;padding:0.6rem 1.2rem;font-weight:600;font-size:0.8rem;text-align:center;">✅ Follow it<br>and resolve</div>
+  <div style="color:#7a7a7a;font-size:1.2rem;padding:0 0.25rem;">→</div>
+  <div style="background:#EAF0FB;color:#1F3864;border:1.5px solid #2E75B6;border-radius:8px;padding:0.6rem 1.2rem;font-weight:600;font-size:0.8rem;text-align:center;">📝 No runbook?<br>Write one</div>
+</div>
+
+!!! tip "Build the library incrementally"
+    You don't need runbooks before incidents happen — you build them after. Every resolved recurring issue is an opportunity to add one. Over time the library grows and your team gets faster on every repeat scenario.
+
+---
+
 ## How to Use a Runbook
 
 1. Confirm the symptom matches the runbook's described scenario before following the steps

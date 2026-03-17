@@ -16,8 +16,8 @@ Severity determines how fast you respond, who you involve, and how you communica
 
 | Severity | Label | Definition | Examples |
 |----------|-------|------------|---------|
-| **SEV-1** | Critical | Complete loss of a business-critical capability. Data is unavailable, incorrect, or actively misleading decision-makers. | All Power BI reports blank or erroring · Production pipeline fully stopped · Data loss confirmed |
-| **SEV-2** | High | Significant degradation of a key capability. Core functionality is impaired but a workaround may exist. | Dashboard shows stale data · Key pipeline delayed by hours · Refresh failing for a major dataset |
+| **SEV-1** | Critical | Complete loss of a business-critical capability. Data is unavailable, incorrect, or actively misleading decision-makers. | BI reports unavailable for all users · Production pipeline fully stopped · Data loss confirmed |
+| **SEV-2** | High | Significant degradation of a key capability. Core functionality is impaired but a workaround may exist. | Dashboard shows stale data · Key pipeline delayed by hours · Scheduled refresh failing for a major dataset |
 | **SEV-3** | Medium | Partial impact on a non-critical capability or a low-visibility issue. Operations can continue. | One report visual incorrect · Non-critical pipeline delayed · Intermittent refresh failures |
 | **SEV-4** | Low | Minor issue with no immediate operational impact. Informational or cosmetic. | Formatting issue in a report · Slow query with no user complaint · Documentation gap |
 
@@ -50,9 +50,17 @@ SLA (Service Level Agreement) targets define the maximum time allowed for each p
 
 Every incident follows the same five-step lifecycle regardless of severity.
 
-```
-1. DETECT ──► 2. TRIAGE ──► 3. INVESTIGATE ──► 4. RESOLVE ──► 5. CLOSE
-```
+<div style="display:flex;align-items:center;justify-content:center;gap:0;margin:1.5rem 0;flex-wrap:wrap;">
+  <div style="background:#EAF0FB;color:#1F3864;border:1.5px solid #2E75B6;border-radius:8px;padding:0.6rem 1.2rem;font-weight:600;font-size:0.8rem;text-align:center;">🔍 Detect</div>
+  <div style="color:#7a7a7a;font-size:1.2rem;padding:0 0.25rem;">→</div>
+  <div style="background:#EAF0FB;color:#1F3864;border:1.5px solid #2E75B6;border-radius:8px;padding:0.6rem 1.2rem;font-weight:600;font-size:0.8rem;text-align:center;">📋 Triage</div>
+  <div style="color:#7a7a7a;font-size:1.2rem;padding:0 0.25rem;">→</div>
+  <div style="background:#EAF0FB;color:#1F3864;border:1.5px solid #2E75B6;border-radius:8px;padding:0.6rem 1.2rem;font-weight:600;font-size:0.8rem;text-align:center;">🔎 Investigate</div>
+  <div style="color:#7a7a7a;font-size:1.2rem;padding:0 0.25rem;">→</div>
+  <div style="background:#EAF0FB;color:#1F3864;border:1.5px solid #2E75B6;border-radius:8px;padding:0.6rem 1.2rem;font-weight:600;font-size:0.8rem;text-align:center;">✅ Resolve</div>
+  <div style="color:#7a7a7a;font-size:1.2rem;padding:0 0.25rem;">→</div>
+  <div style="background:#EAF0FB;color:#1F3864;border:1.5px solid #2E75B6;border-radius:8px;padding:0.6rem 1.2rem;font-weight:600;font-size:0.8rem;text-align:center;">🔒 Close</div>
+</div>
 
 ### 1 · Detect
 
@@ -150,5 +158,5 @@ Escalate when the issue is beyond your current access, expertise, or authority t
     - Set **Severity** and **Priority** fields; use **Area Path** to route to the correct team
     - Use **Discussion** section for all updates — both internal and stakeholder-facing (there is no native internal/external split unless using extensions)
     - Link work items using **Add Link > Related / Blocked By / Blocks** to track causal relationships
-    - Azure DevOps does not have native SLA management — teams typically track SLA compliance via custom dashboards or Power BI reports on the DevOps data
+    - Azure DevOps does not have native SLA management — teams typically track SLA compliance via custom dashboards or reports built on the DevOps connector
     - For major incidents, use a dedicated **Epic** or **Feature** to group all related work items under a single incident record

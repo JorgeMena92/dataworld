@@ -5,9 +5,7 @@ description: A structured approach to data platform support — incident triage,
 
 # Support Framework
 
-A practical framework for supporting a production data platform built on Power BI, Azure Databricks, Azure Data Factory, and Microsoft Fabric.
-
-The framework is organized around the four core responsibilities of a data platform support role: **investigating incidents**, **running daily operations**, **documenting and tracking work**, and **communicating clearly with stakeholders and teams**.
+A practical framework for supporting a production data platform. Designed for roles that sit at the intersection of data engineering and platform operations — anyone responsible for keeping pipelines running, data fresh, and stakeholders informed.
 
 ---
 
@@ -20,79 +18,94 @@ The framework is organized around the four core responsibilities of a data platf
 | [Daily Operations](daily-operations.md) | Shift start checklist, platform health checks, and handover template |
 | [Incident Tracking](incident-tracking.md) | How to write an incident record, post-mortem structure, and knowledge base contribution |
 | [Communication Standards](communication-standards.md) | How to communicate during outages, in handovers, and with stakeholders |
+| [Runbooks](../runbooks/index.md) | Step-by-step procedures for known and recurring platform issues |
 
 ---
 
-## How the Framework Fits Together
- 
-<div class="diagram-light" markdown>
-```mermaid
-flowchart TD
-    INCIDENT(["🔍 Incident Detected"]):::start
- 
-    L1["📊 Layered Triage"]:::layer
-    L2["🚨 Incident Management"]:::layer
-    L3["📝 Incident Tracking"]:::layer
-    L4["📣 Communication Standards"]:::layer
- 
-    D1["Work from the presentation layer inward.\nIsolate root cause before going deeper."]:::desc
-    D2["Assign severity · Start SLA clock\nEscalate if needed"]:::desc
-    D3["Write the incident record · Document timeline\nSchedule post-mortem"]:::desc
-    D4["Update stakeholders · Complete handover\nContribute to knowledge base"]:::desc
- 
-    INCIDENT --> L1 --> L2 --> L3 --> L4
- 
-    L1 -.- D1
-    L2 -.- D2
-    L3 -.- D3
-    L4 -.- D4
- 
-    classDef start fill:#e0e0e0,color:#1c1c1e,stroke:#e0e0e0,stroke-width:2px
-    classDef layer fill:#EAF0FB,color:#1F3864,stroke:#2E75B6,stroke-width:1.5px
-    classDef desc  fill:#ffffff,color:#3a3a3c,stroke:#e0e0e0,stroke-width:1px
- 
-    linkStyle 0,1,2,3 stroke:#7a7a7a,stroke-width:1.5px
-    linkStyle 4,5,6,7 stroke:#c0c0c0,stroke-width:1px,stroke-dasharray:4
-```
-</div>
- 
-<div class="diagram-dark" markdown>
-```mermaid
-flowchart TD
-    INCIDENT(["🔍 Incident Detected"]):::start
- 
-    L1["📊 Layered Triage"]:::layer
-    L2["🚨 Incident Management"]:::layer
-    L3["📝 Incident Tracking"]:::layer
-    L4["📣 Communication Standards"]:::layer
- 
-    D1["Work from the presentation layer inward.\nIsolate root cause before going deeper."]:::desc
-    D2["Assign severity · Start SLA clock\nEscalate if needed"]:::desc
-    D3["Write the incident record · Document timeline\nSchedule post-mortem"]:::desc
-    D4["Update stakeholders · Complete handover\nContribute to knowledge base"]:::desc
- 
-    INCIDENT --> L1 --> L2 --> L3 --> L4
- 
-    L1 -.- D1
-    L2 -.- D2
-    L3 -.- D3
-    L4 -.- D4
- 
-    classDef start fill:#2a2a2a,color:#f0f0f0,stroke:#3a3a3a,stroke-width:2px
-    classDef layer fill:#1e2a38,color:#a0b8d0,stroke:#2a3f55,stroke-width:1.5px
-    classDef desc  fill:#1a1a1a,color:#a0b8d0,stroke:#2a2a2a,stroke-width:1px
- 
-    linkStyle 0,1,2,3 stroke:#606060,stroke-width:1.5px
-    linkStyle 4,5,6,7 stroke:#404040,stroke-width:1px,stroke-dasharray:4
-```
-</div>
- 
-<style>
-  [data-md-color-scheme="default"] .diagram-dark  { display: none; }
-  [data-md-color-scheme="slate"]   .diagram-light { display: none; }
-</style>
- 
----
+## The Incident Flow
 
-!!! tip "Start with Layered Triage"
-    When an incident comes in, the [Layered Triage](layered-fw.md) page is your first reference. It tells you where to look and in what order — from the Power BI report surface all the way down to infrastructure and security.
+When something goes wrong, this is the end-to-end path from detection to closure. Each step links to the page that covers it in detail.
+
+<div class="incident-flow">
+
+  <div class="flow-step flow-step--alert">
+    <div class="flow-step__icon">⚠️</div>
+    <div class="flow-step__body">
+      <div class="flow-step__title">Something is wrong</div>
+      <div class="flow-step__sub">An incident has been detected</div>
+    </div>
+  </div>
+  <div class="flow-arrow">↓</div>
+
+  <div class="flow-step">
+    <div class="flow-step__icon">1</div>
+    <div class="flow-step__body">
+      <div class="flow-step__title">🎫 Log it</div>
+      <div class="flow-step__sub">Create ticket · Assign severity · <a href="incident-management.md">Incident Management</a></div>
+    </div>
+  </div>
+  <div class="flow-arrow">↓</div>
+
+  <div class="flow-step">
+    <div class="flow-step__icon">2</div>
+    <div class="flow-step__body">
+      <div class="flow-step__title">🔎 Triage it</div>
+      <div class="flow-step__sub">Confirm scope and impact · <a href="incident-management.md">Incident Management</a></div>
+    </div>
+  </div>
+  <div class="flow-arrow">↓</div>
+
+  <div class="flow-step">
+    <div class="flow-step__icon">3</div>
+    <div class="flow-step__body">
+      <div class="flow-step__title">🗂️ Investigate it</div>
+      <div class="flow-step__sub">Work through the layers · <a href="layered-fw.md">Layered Triage</a></div>
+    </div>
+  </div>
+  <div class="flow-arrow">↓</div>
+
+  <div class="flow-step">
+    <div class="flow-step__icon">4</div>
+    <div class="flow-step__body">
+      <div class="flow-step__title">📋 Check for a known fix</div>
+      <div class="flow-step__sub">Is there a procedure for this? · <a href="runbooks/index.md">Runbooks</a></div>
+    </div>
+  </div>
+  <div class="flow-arrow">↓</div>
+
+  <div class="flow-step">
+    <div class="flow-step__icon">5</div>
+    <div class="flow-step__body">
+      <div class="flow-step__title">✅ Resolve it</div>
+      <div class="flow-step__sub">Fix · Workaround · Rollback · <a href="incident-management.md">Incident Management</a></div>
+    </div>
+  </div>
+  <div class="flow-arrow">↓</div>
+
+  <div class="flow-step">
+    <div class="flow-step__icon">6</div>
+    <div class="flow-step__body">
+      <div class="flow-step__title">📣 Communicate</div>
+      <div class="flow-step__sub">Update stakeholders · <a href="communication-standards.md">Communication Standards</a></div>
+    </div>
+  </div>
+  <div class="flow-arrow">↓</div>
+
+  <div class="flow-step">
+    <div class="flow-step__icon">7</div>
+    <div class="flow-step__body">
+      <div class="flow-step__title">📝 Document it</div>
+      <div class="flow-step__sub">Incident record · Post-mortem · <a href="incident-tracking.md">Incident Tracking</a></div>
+    </div>
+  </div>
+  <div class="flow-arrow">↓</div>
+
+  <div class="flow-step">
+    <div class="flow-step__icon">8</div>
+    <div class="flow-step__body">
+      <div class="flow-step__title">🔄 Hand over</div>
+      <div class="flow-step__sub">Update the shift note · <a href="daily-operations.md">Daily Operations</a></div>
+    </div>
+  </div>
+
+</div>
