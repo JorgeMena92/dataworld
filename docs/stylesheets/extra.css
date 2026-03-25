@@ -793,3 +793,7 @@ body {
 [data-md-color-scheme="slate"] .flow-step__sub {
   color: var(--brand-ink);
 }
+
+.md-typeset h2 {
+  color: var(--brand-mint-dark);
+}

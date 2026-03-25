@@ -139,6 +139,29 @@ Power BI Desktop is organized into distinct views, accessible from the left-side
 
 ---
 
+## Power BI File Formats
+
+Power BI uses several file formats depending on the stage of development. Understanding each one avoids confusion when sharing files or setting up workflows.
+
+| Format | Description |
+|--------|-------------|
+| **.pbix** | The traditional single binary file — contains the report, semantic model, and data in one file. The default format for most users. |
+| **.pbip** | Power BI Project — saves the report and semantic model as a folder of human-readable text files. Designed for version control, CI/CD, and collaborative development. |
+| **.pbit** | Power BI Template — a .pbix without the data. Used to share a report structure and model as a starting point, prompting the recipient to connect their own data source on open. |
+| **.pbids** | Power BI Data Source — a small JSON file that stores only connection information. Opening it in Desktop launches the Get Data flow pre-pointed at that source. Useful for standardizing data source connections across a team. |
+
+Inside a PBIP project, there are two layers:
+
+- **TMDL** — the semantic model as text (tables, measures, relationships). Readable, diffable, and automatable.
+- **PBIR** — the report as individual JSON files per visual, page, and bookmark. Makes every change reviewable in Git.
+
+Together they turn Power BI from a file-based tool into a proper software development project.
+
+!!! note
+    PBIP was introduced as a preview in 2023. PBIR became the default format for new reports in Power BI Service in January 2026 and in Power BI Desktop in March 2026. General Availability for the full PBIP format is planned for Q3 2026. For teams using Git and CI/CD, PBIP is already the recommended format — `.pbix` remains fully supported and is not going away.
+
+---
+
 ## Best Practices
 
 - Choose Import mode by default — only deviate when there is a specific, documented reason
@@ -146,3 +169,4 @@ Power BI Desktop is organized into distinct views, accessible from the left-side
 - Keep transformation logic in Power Query or upstream SQL — not in DAX calculated columns
 - Publish to shared workspaces, never to My Workspace, for anything used by others
 - Learn DAX context (filter context and row context) early — it explains most unexpected behavior
+- Use PBIP format for new projects if the team uses version control — it enables proper Git workflows and CI/CD
