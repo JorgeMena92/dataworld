@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   Data World — Brand CSS
+   Data World — Extra CSS
    ═══════════════════════════════════════════════════════════ */
 
 
@@ -11,58 +11,58 @@
 
 
 /* ─────────────────────────────────────────────────────────
-   2. BRAND TOKENS — light mode
+   2. COLOR TOKENS — light mode
    ───────────────────────────────────────────────────────── */
 
 :root {
-  --brand-ink:        #1c1c1e;
-  --brand-ink-soft:   #3a3a3c;
-  --brand-surface:    #f5f5f5;
-  --brand-mint:       #3cb371;
-  --brand-mint-dark:  #2d8a57;
-  --brand-mint-glow:  rgba(60, 179, 113, 0.1);
-  --brand-border:     #e0e0e0;
-  --brand-muted:      #7a7a7a;
+  --color-ink:          #1c1c1e;
+  --color-ink-soft:     #3a3a3c;
+  --color-surface:      #f5f5f5;
+  --color-primary:      #3cb371;
+  --color-primary-dark: #2d8a57;
+  --color-primary-glow: rgba(60, 179, 113, 0.1);
+  --color-border:       #e0e0e0;
+  --color-muted:        #7a7a7a;
 
-  --md-primary-fg-color:        var(--brand-ink);
-  --md-primary-bg-color:        var(--brand-surface);
-  --md-accent-fg-color:         var(--brand-mint-dark);
-  --md-accent-fg-color--light:  var(--brand-mint-dark);
-  --md-typeset-a-color:         var(--brand-mint-dark);
+  --md-primary-fg-color:        var(--color-ink);
+  --md-primary-bg-color:        var(--color-surface);
+  --md-accent-fg-color:         var(--color-primary-dark);
+  --md-accent-fg-color--light:  var(--color-primary-dark);
+  --md-typeset-a-color:         var(--color-primary-dark);
   --md-text-font:               "DM Sans", sans-serif;
   --md-code-font:               "JetBrains Mono", monospace;
 
-  --md-footer-fg-color:          var(--brand-ink);
-  --md-footer-fg-color--light:   var(--brand-ink-soft);
-  --md-footer-fg-color--lighter: var(--brand-muted);
-  --md-footer-bg-color:          var(--brand-surface);
-  --md-footer-bg-color--dark:    var(--brand-surface);
+  --md-footer-fg-color:          var(--color-ink);
+  --md-footer-fg-color--light:   var(--color-ink-soft);
+  --md-footer-fg-color--lighter: var(--color-muted);
+  --md-footer-bg-color:          var(--color-surface);
+  --md-footer-bg-color--dark:    var(--color-surface);
 }
 
 
 /* ─────────────────────────────────────────────────────────
-   3. BRAND TOKENS — dark mode
+   3. COLOR TOKENS — dark mode
    ───────────────────────────────────────────────────────── */
 
 [data-md-color-scheme="slate"] {
-  --brand-ink:        #f0f0f0;
-  --brand-ink-soft:   #a0b8d0;
-  --brand-surface:    #1a1a1a;
-  --brand-border:     #2a2a2a;
-  --brand-muted:      #606060;
-  --brand-mint-glow:  rgba(60, 179, 113, 0.08);
+  --color-ink:          #f0f0f0;
+  --color-ink-soft:     #a0b8d0;
+  --color-surface:      #1a1a1a;
+  --color-border:       #2a2a2a;
+  --color-muted:        #606060;
+  --color-primary-glow: rgba(60, 179, 113, 0.08);
 
-  --md-primary-fg-color:  var(--brand-ink);
-  --md-primary-bg-color:  var(--brand-surface);
+  --md-primary-fg-color:  var(--color-ink);
+  --md-primary-bg-color:  var(--color-surface);
   --md-default-bg-color:  #1f1f1f;
-  --md-default-fg-color:  var(--brand-ink);
-  --md-typeset-a-color:   var(--brand-mint);
+  --md-default-fg-color:  var(--color-ink);
+  --md-typeset-a-color:   var(--color-primary);
 
-  --md-footer-fg-color:          var(--brand-ink);
-  --md-footer-fg-color--light:   var(--brand-ink-soft);
-  --md-footer-fg-color--lighter: var(--brand-muted);
-  --md-footer-bg-color:          var(--brand-surface);
-  --md-footer-bg-color--dark:    var(--brand-surface);
+  --md-footer-fg-color:          var(--color-ink);
+  --md-footer-fg-color--light:   var(--color-ink-soft);
+  --md-footer-fg-color--lighter: var(--color-muted);
+  --md-footer-bg-color:          var(--color-surface);
+  --md-footer-bg-color--dark:    var(--color-surface);
 }
 
 
@@ -75,8 +75,8 @@ html {
 }
 
 body {
-  background-color: var(--brand-surface);
-  color: var(--brand-ink);
+  background-color: var(--color-surface);
+  color: var(--color-ink);
   -webkit-font-smoothing: antialiased;
   padding: 0;
   overflow-x: hidden;
@@ -88,10 +88,10 @@ body {
    ───────────────────────────────────────────────────────── */
 
 .md-header {
-  background-color: var(--brand-surface);
+  background-color: var(--color-surface);
   box-shadow: none;
-  border-bottom: 1px solid var(--brand-border);
-  color: var(--brand-ink);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-ink);
   z-index: 4 !important;
 }
 
@@ -106,7 +106,7 @@ body {
 }
 
 .md-header__button.md-logo svg {
-  fill: var(--brand-ink);
+  fill: var(--color-ink);
 }
 
 
@@ -115,9 +115,9 @@ body {
    ───────────────────────────────────────────────────────── */
 
 .md-tabs {
-  background-color: var(--brand-surface);
-  border-bottom: 1px solid var(--brand-border);
-  color: var(--brand-ink);
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-ink);
 }
 
 .md-tabs__link {
@@ -127,7 +127,7 @@ body {
 .md-tabs__link--active,
 .md-tabs__link:hover {
   opacity: 1;
-  color: var(--brand-mint) !important;
+  color: var(--color-primary) !important;
 }
 
 
@@ -136,14 +136,14 @@ body {
    ───────────────────────────────────────────────────────── */
 
 .md-drawer {
-  background-color: var(--brand-surface) !important;
-  color: var(--brand-ink) !important;
+  background-color: var(--color-surface) !important;
+  color: var(--color-ink) !important;
   z-index: 5 !important;
 }
 
 .md-nav--primary .md-nav__title {
-  background-color: var(--brand-surface) !important;
-  color: var(--brand-ink) !important;
+  background-color: var(--color-surface) !important;
+  color: var(--color-ink) !important;
 }
 
 .md-overlay {
@@ -184,8 +184,8 @@ body {
 
 .md-footer,
 .md-footer-meta {
-  background-color: var(--brand-surface) !important;
-  border-top: 1px solid var(--brand-border);
+  background-color: var(--color-surface) !important;
+  border-top: 1px solid var(--color-border);
 }
 
 .md-footer-meta {
@@ -200,8 +200,8 @@ body {
 .md-copyright,
 .md-copyright *,
 .md-social__link svg {
-  color: var(--brand-ink) !important;
-  fill: var(--brand-ink) !important;
+  color: var(--color-ink) !important;
+  fill: var(--color-ink) !important;
 }
 
 
@@ -212,7 +212,7 @@ body {
 .md-typeset {
   font-size: 0.80rem;
   line-height: 1.75;
-  color: var(--brand-ink);
+  color: var(--color-ink);
 }
 
 .md-typeset h1 {
@@ -221,7 +221,7 @@ body {
   font-weight: 400;
   letter-spacing: -0.03em;
   line-height: 1.15;
-  color: var(--brand-mint-dark);
+  color: var(--color-primary-dark);
   margin-bottom: 0.25em;
   border-bottom: none;
 }
@@ -231,7 +231,7 @@ body {
   font-size: 1.4rem;
   font-weight: 600;
   letter-spacing: -0.01em;
-  color: var(--brand-ink);
+  color: var(--color-primary-dark);
   margin-top: 0.8em;
   margin-bottom: 0.8em;
   padding-bottom: 0;
@@ -241,7 +241,7 @@ body {
 .md-typeset h3 {
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--brand-ink) !important;
+  color: var(--color-ink) !important;
   margin-top: 1.2em;
   margin-bottom: 0.8em;
 }
@@ -262,14 +262,14 @@ body {
 }
 
 .md-typeset a {
-  color: var(--brand-mint-dark);
+  color: var(--color-primary-dark);
   text-decoration: none;
   border-bottom: 1px solid transparent;
   transition: border-color 0.2s ease;
 }
 
 .md-typeset a:hover {
-  border-bottom-color: var(--brand-mint);
+  border-bottom-color: var(--color-primary);
 }
 
 .md-typeset .headerlink {
@@ -278,7 +278,7 @@ body {
 
 .md-typeset .lead {
   font-size: 1.15rem;
-  color: var(--brand-muted);
+  color: var(--color-muted);
   line-height: 1.65;
   font-weight: 300;
 }
@@ -289,8 +289,8 @@ body {
    ───────────────────────────────────────────────────────── */
 
 .md-typeset code {
-  background: var(--brand-mint-glow);
-  color: var(--brand-mint-dark);
+  background: var(--color-primary-glow);
+  color: var(--color-primary-dark);
   border-radius: 4px;
   padding: 0.1em 0.4em;
   font-size: 0.8rem;
@@ -299,7 +299,7 @@ body {
 .md-typeset pre {
   background-color: #fafafa;
   border-radius: 10px;
-  border: 1px solid var(--brand-border);
+  border: 1px solid var(--color-border);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   padding: 1.25rem 1.5rem;
 }
@@ -318,12 +318,12 @@ body {
 }
 
 .md-clipboard {
-  color: var(--brand-muted);
+  color: var(--color-muted);
   transition: color 0.2s;
 }
 
 .md-clipboard:hover {
-  color: var(--brand-mint);
+  color: var(--color-primary);
 }
 
 
@@ -341,8 +341,8 @@ body {
 
 .md-typeset .admonition.tip,
 .md-typeset details.tip {
-  border-color: var(--brand-mint);
-  background-color: var(--brand-mint-glow);
+  border-color: var(--color-primary);
+  background-color: var(--color-primary-glow);
 }
 
 
@@ -354,18 +354,18 @@ body {
   width: auto;
   border-radius: 8px;
   overflow: hidden;
-  border: 1px solid var(--brand-border);
+  border: 1px solid var(--color-border);
   font-size: 0.8rem;
 }
 
 .md-typeset table:not([class]) th {
-  background-color: var(--brand-border) !important;
+  background-color: var(--color-border) !important;
   font-weight: 600;
   font-size: 0.75rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--brand-ink);
-  border-bottom: 1px solid var(--brand-border);
+  color: var(--color-ink);
+  border-bottom: 1px solid var(--color-border);
   padding: 0.3em 1em;
 }
 
@@ -379,7 +379,7 @@ body {
 }
 
 .md-typeset table:not([class]) tr:hover td {
-  background-color: var(--brand-mint-glow) !important;
+  background-color: var(--color-primary-glow) !important;
 }
 
 
@@ -388,8 +388,8 @@ body {
    ───────────────────────────────────────────────────────── */
 
 .md-tag {
-  background: var(--brand-mint-glow);
-  color: var(--brand-mint-dark);
+  background: var(--color-primary-glow);
+  color: var(--color-primary-dark);
   border: 1px solid rgba(60, 179, 113, 0.3);
   border-radius: 20px;
   font-size: 0.72rem;
@@ -409,11 +409,11 @@ body {
 }
 
 .mermaid .quadrant-point circle {
-  fill: var(--brand-mint) !important;
+  fill: var(--color-primary) !important;
 }
 
 .mermaid .quadrant-point text {
-  fill: var(--brand-ink) !important;
+  fill: var(--color-ink) !important;
 }
 
 .diagram-dark { display: none; }
@@ -455,7 +455,7 @@ body {
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--brand-mint);
+  color: var(--color-primary);
   margin-bottom: 0.5rem;
   display: block;
 }
@@ -466,19 +466,19 @@ body {
   font-weight: 400;
   letter-spacing: -0.03em;
   line-height: 1.1;
-  color: var(--brand-ink) !important;
+  color: var(--color-ink) !important;
   margin: 0 0 0.75rem;
 }
 
 .hero__title em {
   font-style: italic;
-  color: var(--brand-mint-dark);
+  color: var(--color-primary-dark);
 }
 
 .hero__subtitle {
   font-size: 1rem;
   font-weight: 300;
-  color: var(--brand-muted);
+  color: var(--color-muted);
   line-height: 1.6;
   max-width: 800px;
   margin-bottom: 1rem;
@@ -497,8 +497,8 @@ body {
 }
 
 .card {
-  background: var(--brand-surface);
-  border: 1px solid var(--brand-border);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 10px;
   padding: 1rem;
   text-decoration: none !important;
@@ -508,14 +508,14 @@ body {
 .card,
 .card:hover,
 .card:focus {
-  border-bottom: 1px solid var(--brand-border) !important;
+  border-bottom: 1px solid var(--color-border) !important;
 }
 
 .card:hover {
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.07);
   transform: translateY(-2px);
-  border-color: var(--brand-mint);
-  border-bottom-color: var(--brand-mint) !important;
+  border-color: var(--color-primary);
+  border-bottom-color: var(--color-primary) !important;
 }
 
 [data-md-color-scheme="slate"] .card {
@@ -531,13 +531,13 @@ body {
 .card__title {
   font-size: 0.95rem;
   font-weight: 600;
-  color: var(--brand-ink);
+  color: var(--color-ink);
   margin-bottom: 0.3rem;
 }
 
 .card__desc {
   font-size: 0.82rem;
-  color: var(--brand-muted);
+  color: var(--color-muted);
   line-height: 1.5;
 }
 
@@ -601,21 +601,21 @@ body {
    ───────────────────────────────────────────────────────── */
 
 .md-search__input {
-  color: var(--brand-ink) !important;
-  background-color: var(--brand-border) !important;
+  color: var(--color-ink) !important;
+  background-color: var(--color-border) !important;
 }
 
 .md-search__input::placeholder {
-  color: var(--brand-muted) !important;
+  color: var(--color-muted) !important;
 }
 
 .md-search__icon {
-  color: var(--brand-ink) !important;
+  color: var(--color-ink) !important;
 }
 
 
 /* ─────────────────────────────────────────────────────────
-   23. INCIDENT FLOW
+   22. INCIDENT FLOW
    ───────────────────────────────────────────────────────── */
 
 .incident-flow {
@@ -628,7 +628,7 @@ body {
 }
 
 .flow-arrow {
-  color: var(--brand-muted);
+  color: var(--color-muted);
   font-size: 1.2rem;
   line-height: 1.4;
   text-align: center;
@@ -640,7 +640,7 @@ body {
   gap: 0.75rem;
   width: 100%;
   background: #ffffff;
-  border: 1.5px solid var(--brand-border);
+  border: 1.5px solid var(--color-border);
   border-radius: 8px;
   padding: 0.6rem 1rem;
 }
@@ -658,7 +658,7 @@ body {
   height: 2rem;
   min-width: 2rem;
   border-radius: 50%;
-  background: var(--brand-mint-dark);
+  background: var(--color-primary-dark);
   color: #ffffff;
   font-weight: 700;
   font-size: 0.8rem;
@@ -672,7 +672,7 @@ body {
 .flow-step__title {
   font-weight: 600;
   font-size: 0.8rem;
-  color: var(--brand-ink);
+  color: var(--color-ink);
   line-height: 1.3;
 }
 
@@ -682,14 +682,19 @@ body {
 
 .flow-step__sub {
   font-size: 0.75rem;
-  color: var(--brand-muted);
+  color: var(--color-muted);
   line-height: 1.4;
 }
 
-/* Dark mode */
+.flow-step--start .flow-step__icon {
+  background: var(--color-border);
+  color: var(--color-ink);
+  font-size: 1rem;
+}
+
 [data-md-color-scheme="slate"] .flow-step {
   background: #242424;
-  border-color: var(--brand-border);
+  border-color: var(--color-border);
 }
 
 [data-md-color-scheme="slate"] .flow-step--alert {
@@ -697,26 +702,29 @@ body {
   border-color: #e57373;
 }
 
-[data-md-color-scheme="slate"] .flow-step__icon {
-  background: var(--brand-mint-dark);
-  color: #ffffff;
-}
-
-[data-md-color-scheme="slate"] .flow-step--alert .flow-step__icon {
-  background: #e57373;
-  color: #ffffff;
-}
-
 [data-md-color-scheme="slate"] .flow-step--alert .flow-step__title {
   color: #f5a0a0;
 }
+
+[data-md-color-scheme="slate"] .flow-step__sub {
+  color: var(--color-ink);
+}
+
+[data-md-color-scheme="slate"] .flow-step--start .flow-step__icon {
+  background: #3a3a3a;
+  color: var(--color-ink);
+}
+
+
+/* ─────────────────────────────────────────────────────────
+   23. LAYERED FRAMEWORK
    ───────────────────────────────────────────────────────── */
 
 .fw-connector {
   width: 2px !important;
   height: 12px !important;
   min-height: 12px !important;
-  background: var(--brand-border, #e0e0e0) !important;
+  background: var(--color-border) !important;
   margin: 6px auto !important;
   display: block !important;
 }
@@ -726,12 +734,12 @@ body {
   box-shadow: none !important;
   border-radius: 0 !important;
   background: #ffffff !important;
-  border-color: var(--brand-border, #e0e0e0) !important;
+  border-color: var(--color-border) !important;
 }
 
 .fw-layers details.fw-layer:first-child {
   border-radius: 10px 10px 0 0 !important;
-  border-top-color: var(--brand-border, #e0e0e0) !important;
+  border-top-color: var(--color-border) !important;
 }
 
 .fw-layers details.fw-layer:last-child {
@@ -769,31 +777,10 @@ body {
 }
 
 [data-md-color-scheme="slate"] .fw-layers details.fw-layer .fw-name {
-  color: var(--brand-mint, #3cb371) !important;
+  color: var(--color-primary) !important;
 }
 
 [data-md-color-scheme="slate"] .fw-layers details.fw-layer .fw-sub,
 [data-md-color-scheme="slate"] .fw-layers details.fw-layer .fw-body ul li {
   color: #f0f0f0 !important;
-}
-
-
-
-.flow-step--start .flow-step__icon {
-  background: var(--brand-border);
-  color: var(--brand-ink);
-  font-size: 1rem;
-}
-
-[data-md-color-scheme="slate"] .flow-step--start .flow-step__icon {
-  background: #3a3a3a;
-  color: var(--brand-ink);
-}
-
-[data-md-color-scheme="slate"] .flow-step__sub {
-  color: var(--brand-ink);
-}
-
-.md-typeset h2 {
-  color: var(--brand-mint-dark);
 }
