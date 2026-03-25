@@ -41,8 +41,8 @@ Tag releases before deploying:
 
 ```bash
 git add .
-git commit -m "v2.5.0 - description"
-git tag v2.5.0
+git commit -m "v2.6.0 - description"
+git tag v2.6.0
 git push origin main --tags
 python -m mkdocs gh-deploy
 ```
@@ -138,6 +138,7 @@ Short, actionable rules. What to do, what to avoid, and why.
     │   ├── logo.png
     │   └── images/
     │       └── favicon.png
+    │       └── star-schema.svg
     ├── sql/
     │   ├── index.md
     │   ├── introduction.md
@@ -196,10 +197,13 @@ Short, actionable rules. What to do, what to avoid, and why.
     ├── powerbi/
     │   ├── index.md
     │   ├── fundamentals.md
+    │   ├── power-query.md
     │   ├── data-modeling.md
     │   ├── dax.md
+    │   ├── dax-iterators.md
+    │   ├── dax-time-intelligence.md
+    │   ├── dax-patterns.md
     │   ├── report-design.md
-    │   ├── power-query.md
     │   ├── deployment.md
     │   └── licensing.md
     ├── operations/
@@ -227,6 +231,7 @@ Short, actionable rules. What to do, what to avoid, and why.
 
 | Version | Description |
 |---------|-------------|
+| v2.6.0 | Power BI section fully reviewed — fundamentals expanded with Fabric intro, Desktop Views, and connection modes; Power Query deepened with M language, parameters, Reference vs Duplicate; Data Modeling with role-playing dimensions, inactive relationships, DAX date table examples; DAX split into four pages (Fundamentals, Iterators, Time Intelligence, Patterns); Report Design expanded with navigation, visual interactions, conditional formatting, slicer panel pattern; Deployment updated with RLS, service principals, Fabric Git, VNet gateway; Licensing rebuilt with F SKU table, P SKU retirement, Fabric Free clarification, trials |
 | v2.5.0 | Operations refinements — incident flow HTML/CSS component, collapsible layered triage, runbooks moved inside Support Framework, references page rebuilt with links, CSS cleanup and dark mode consistency pass |
 | v2.4.0 | Operations section — Support Framework (Layered Triage, Incident Management, Daily Operations, Incident Tracking, Communication Standards), Runbooks and Monitoring stubs; CSS cleanup and consistency pass |
 | v2.3.0 | DDL, Database Objects, Performance, and SQL Patterns sections reviewed — ANSI fixes, cross-references, vendor notes, structural consistency across 29 pages |

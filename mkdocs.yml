@@ -127,10 +127,14 @@ nav:
   - Power BI:
     - powerbi/index.md
     - Fundamentals: powerbi/fundamentals.md
-    - Data Modeling: powerbi/data-modeling.md
-    - DAX: powerbi/dax.md
-    - Report Design: powerbi/report-design.md
     - Power Query: powerbi/power-query.md
+    - Data Modeling: powerbi/data-modeling.md
+    - DAX:
+      - Fundamentals: powerbi/dax.md
+      - Iterators: powerbi/dax-iterators.md
+      - Time Intelligence: powerbi/dax-time-intelligence.md
+      - Patterns: powerbi/dax-patterns.md
+    - Report Design: powerbi/report-design.md
     - Deployment & Service: powerbi/deployment.md
     - Licensing: powerbi/licensing.md
   #- Databricks: databricks/index.md

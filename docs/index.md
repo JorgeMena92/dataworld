@@ -9,7 +9,8 @@ hide:
 <div class="hero">
   <h1 class="hero__title">Hi, I'm Jorge.<br><em>I write about data.</em></h1>
   <p class="hero__subtitle">A practical and structured reference for Data Analyst and Data Engineering.
-  <br>Focused on SQL and Power BI, built from real project experience.</p>
+  <br>Focused on SQL and Power BI, built from real project experience.
+  <br><small><em>Last updated: March 2026</em></small>
 </div>
 
 <div class="card-grid">
@@ -43,6 +44,3 @@ hide:
     <div class="card__desc">Background, experience, and contact information.</div>
   </a>
 </div>
-
-
-
