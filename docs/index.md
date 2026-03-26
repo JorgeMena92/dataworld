@@ -28,7 +28,7 @@ hide:
 
   <a href="fabric/" class="card">
     <span class="card__icon">🧩</span>
-    <div class="card__title">Microsoft Fabric</div>
+    <div class="card__title">Fabric</div>
     <div class="card__desc">Lakehouse, pipelines, notebooks, warehouses, and the unified analytics platform.</div>
   </a>
 
