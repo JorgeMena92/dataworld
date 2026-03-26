@@ -9,8 +9,8 @@ hide:
 <div class="hero">
   <h1 class="hero__title">Hi, I'm Jorge.<br><em>I write about data.</em></h1>
   <p class="hero__subtitle">A practical and structured reference for Data Analyst and Data Engineering.
-  <br>Focused on SQL and Power BI, built from real project experience.
-  <br><small><em>Last updated: March 2026</em></small>
+  <br>Focused on SQL, Power BI and Fabric, built from real project experience.
+  <br>Last updated: March 2026</p>
 </div>
 
 <div class="card-grid">
@@ -24,6 +24,12 @@ hide:
     <span class="card__icon">📊</span>
     <div class="card__title">Power BI</div>
     <div class="card__desc">DAX logic, data modeling ideas, and reporting-oriented solutions.</div>
+  </a>
+
+  <a href="fabric/" class="card">
+    <span class="card__icon">🧩</span>
+    <div class="card__title">Microsoft Fabric</div>
+    <div class="card__desc">Lakehouse, pipelines, notebooks, warehouses, and the unified analytics platform.</div>
   </a>
 
   <a href="operations/" class="card">

@@ -137,6 +137,16 @@ nav:
     - Report Design: powerbi/report-design.md
     - Deployment & Service: powerbi/deployment.md
     - Licensing: powerbi/licensing.md
+  - Fabric:
+    - fabric/index.md
+    - Fundamentals: fabric/fundamentals.md
+    - Lakehouse: fabric/lakehouse.md
+    - Pipelines: fabric/pipelines.md
+    - Notebooks: fabric/notebooks.md
+    - Warehouse: fabric/warehouse.md
+    - Real-Time Intelligence: fabric/real-time.md
+    - Direct Lake: fabric/direct-lake.md
+    - Deployment & ALM: fabric/deployment.md
   #- Databricks: databricks/index.md
   #- Projects: projects/index.md
   - Operations:

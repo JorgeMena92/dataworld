@@ -41,8 +41,8 @@ Tag releases before deploying:
 
 ```bash
 git add .
-git commit -m "v2.6.1 - description"
-git tag v2.6.1
+git commit -m "v2.7.0 - description"
+git tag v2.7.0
 git push origin main --tags
 python -m mkdocs gh-deploy
 ```
@@ -206,6 +206,16 @@ Short, actionable rules. What to do, what to avoid, and why.
     │   ├── report-design.md
     │   ├── deployment.md
     │   └── licensing.md
+    ├── fabric/
+    │   ├── index.md
+    │   ├── fundamentals.md
+    │   ├── lakehouse.md
+    │   ├── pipelines.md
+    │   ├── notebooks.md
+    │   ├── warehouse.md
+    │   ├── real-time.md
+    │   ├── direct-lake.md
+    │   └── deployment.md
     ├── operations/
     │   ├── index.md
     │   ├── support/
@@ -231,6 +241,7 @@ Short, actionable rules. What to do, what to avoid, and why.
 
 | Version | Description |
 |---------|-------------|
+| v2.7.0 | Microsoft Fabric section — Fundamentals (OneLake, workloads, medallion architecture), Lakehouse (Delta Lake, shortcuts, schemas, table maintenance), Pipelines (activities, parameters, expressions, incremental loading), Notebooks (PySpark, SQL, Lakehouse integration patterns), Warehouse (T-SQL, cross-database queries, stored procedures), Real-Time Intelligence (Eventstream, KQL, materialized views, dashboards), Direct Lake (framing, fallback, SKU guardrails), Deployment & ALM (Git integration, deployment pipelines, CI/CD) |
 | v2.6.1 | CSS refactor — generic color tokens replacing brand-specific variable names, section numbering fixed, dark mode overrides consolidated |
 | v2.6.0 | Power BI section fully reviewed — fundamentals expanded with Fabric intro, Desktop Views, and connection modes; Power Query deepened with M language, parameters, Reference vs Duplicate; Data Modeling with role-playing dimensions, inactive relationships, DAX date table examples; DAX split into four pages (Fundamentals, Iterators, Time Intelligence, Patterns); Report Design expanded with navigation, visual interactions, conditional formatting, slicer panel pattern; Deployment updated with RLS, service principals, Fabric Git, VNet gateway; Licensing rebuilt with F SKU table, P SKU retirement, Fabric Free clarification, trials |
 | v2.5.0 | Operations refinements — incident flow HTML/CSS component, collapsible layered triage, runbooks moved inside Support Framework, references page rebuilt with links, CSS cleanup and dark mode consistency pass |
