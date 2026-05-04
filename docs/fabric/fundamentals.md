@@ -27,7 +27,7 @@ Fabric consolidates all of these into one platform:
 | **Data Science** | Spark | ML model development, experiment tracking, and operationalization |
 | **Data Warehousing** | T-SQL | Full SQL analytics warehouse storing data natively in Delta Lake format |
 | **Real-Time Intelligence** | KQL | Event streaming, KQL databases, and real-time dashboards |
-| **Power BI** | Analysis Services | Semantic models, reports, and dashboards — the BI layer |
+| **Power BI** | — | Semantic models, reports, and dashboards — the BI layer |
 | **Databases** | T-SQL | Transactional SQL databases and mirroring from external sources into OneLake |
 | **Fabric IQ** | — | Unified business semantics — ontologies, metrics, and context-aware AI agents *(preview)* |
 | **Additional workloads** | — | Third-party and custom workloads via the Fabric Extensibility Toolkit |

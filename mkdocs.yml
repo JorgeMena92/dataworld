@@ -138,15 +138,18 @@ nav:
     - Deployment & Service: powerbi/deployment.md
     - Licensing: powerbi/licensing.md
   - Fabric:
-    - fabric/index.md
-    - Fundamentals: fabric/fundamentals.md
-    - Lakehouse: fabric/lakehouse.md
-    - Pipelines: fabric/pipelines.md
-    - Notebooks: fabric/notebooks.md
-    - Warehouse: fabric/warehouse.md
-    - Real-Time Intelligence: fabric/real-time.md
-    - Direct Lake: fabric/direct-lake.md
-    - Deployment & ALM: fabric/deployment.md
+      - fabric/index.md
+      - Fundamentals: fabric/fundamentals.md
+      - Storage & Compute:
+        - Lakehouse: fabric/lakehouse.md
+        - Warehouse: fabric/warehouse.md
+        - Real-Time Intelligence: fabric/real-time.md
+      - Transformation:
+        - Pipelines: fabric/pipelines.md
+        - Notebooks: fabric/notebooks.md
+      - Semantic Layer:
+        - Direct Lake: fabric/direct-lake.md
+      - Deployment & ALM: fabric/deployment.md
   #- Databricks: databricks/index.md
   #- Projects: projects/index.md
   - Operations:
@@ -166,6 +169,7 @@ nav:
     - handbook/index.md
     - References: handbook/references.md
     - Data Roles: handbook/data-roles.md
+    - Data Engineering Concepts: handbook/de-concepts.md
   - About: about.md
 
   # ── Add sub-pages below as you create the .md files ──────────────────

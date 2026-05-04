@@ -232,7 +232,8 @@ Short, actionable rules. What to do, what to avoid, and why.
     └── handbook/
         ├── index.md
         ├── references.md
-        └── data-roles.md
+        ├── data-roles.md
+        └── de-concepts.md
 ```
 
 ---
@@ -241,6 +242,7 @@ Short, actionable rules. What to do, what to avoid, and why.
 
 | Version | Description |
 |---------|-------------|
+| v2.8.0 | Fabric section restructured by architectural role (Storage & Compute, Transformation, Semantic Layer); Fabric index reorganized into group cards; Handbook — Data Engineering Concepts page added; Handbook index updated with icons and new card; fixed Power BI compute engine label in Fabric Fundamentals |
 | v2.7.0 | Microsoft Fabric section — Fundamentals (OneLake, workloads, medallion architecture), Lakehouse (Delta Lake, shortcuts, schemas, table maintenance), Pipelines (activities, parameters, expressions, incremental loading), Notebooks (PySpark, SQL, Lakehouse integration patterns), Warehouse (T-SQL, cross-database queries, stored procedures), Real-Time Intelligence (Eventstream, KQL, materialized views, dashboards), Direct Lake (framing, fallback, SKU guardrails), Deployment & ALM (Git integration, deployment pipelines, CI/CD) |
 | v2.6.1 | CSS refactor — generic color tokens replacing brand-specific variable names, section numbering fixed, dark mode overrides consolidated |
 | v2.6.0 | Power BI section fully reviewed — fundamentals expanded with Fabric intro, Desktop Views, and connection modes; Power Query deepened with M language, parameters, Reference vs Duplicate; Data Modeling with role-playing dimensions, inactive relationships, DAX date table examples; DAX split into four pages (Fundamentals, Iterators, Time Intelligence, Patterns); Report Design expanded with navigation, visual interactions, conditional formatting, slicer panel pattern; Deployment updated with RLS, service principals, Fabric Git, VNet gateway; Licensing rebuilt with F SKU table, P SKU retirement, Fabric Free clarification, trials |

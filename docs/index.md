@@ -10,7 +10,7 @@ hide:
   <h1 class="hero__title">Hi, I'm Jorge.<br><em>I write about data.</em></h1>
   <p class="hero__subtitle">A practical and structured reference for Data Analyst and Data Engineering.
   <br>Focused on SQL, Power BI and Fabric, built from real project experience.
-  <br>Last updated: March 2026</p>
+  <br><span class="subtle">Last updated: April 2026</span></p>
 </div>
 
 <div class="card-grid">

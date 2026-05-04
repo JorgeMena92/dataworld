@@ -109,6 +109,10 @@ body {
   fill: var(--color-ink);
 }
 
+.subtle {
+  font-size: 0.85em;
+  font-style: italic;
+}
 
 /* ─────────────────────────────────────────────────────────
    6. TABS
